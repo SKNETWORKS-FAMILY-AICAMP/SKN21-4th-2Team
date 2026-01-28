@@ -22,30 +22,37 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
-QDRANT_URL = os.getenv('QDRANT_URL')
-QDRANT_API_KEY = os.getenv('QDRANT_API_KEY')
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 COLLECTION_NAME = "love_counseling_db"
 reranker = CrossEncoder("BAAI/bge-reranker-v2-m3")
+
 
 def rewrite_query(original_query):
     """
     사용자의 질문을 검색에 최적화된 형태로 재작성합니다.
     """
     llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=OPENAI_API_KEY)
-    
+
     # 📝 연애 상담 데이터셋의 특성에 맞춘 프롬프트 설정
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", "당신은 질문 재작성 전문가입니다. 사용자의 질문을 검색 엔진이 연애 상담 사례 데이터베이스에서 가장 유사한 사례를 잘 찾을 수 있도록 더 구체적이고 명확한 문장으로 한 줄만 재작성하세요."),
-        ("human", f"원래 질문: {original_query}")
-    ])
-    
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "당신은 질문 재작성 전문가입니다. 사용자의 질문을 검색 엔진이 연애 상담 사례 데이터베이스에서 가장 유사한 사례를 잘 찾을 수 있도록 더 구체적이고 명확한 문장으로 한 줄만 재작성하세요.",
+            ),
+            ("human", f"원래 질문: {original_query}"),
+        ]
+    )
+
     chain = prompt | llm
     rewritten_query = chain.invoke({}).content
-    print(f"🔄 재작성된 질문: {rewritten_query}") # 디버깅용
+    print(f"🔄 재작성된 질문: {rewritten_query}")  # 디버깅용
     return rewritten_query
 
 
@@ -93,6 +100,7 @@ def rerank(query, docs, top_n=3):
     ranked = sorted(zip(scores, docs), key=lambda x: x[0], reverse=True)
     return [d for _, d in ranked[:top_n]]
 
+
 def build_text_from_payload(payload: dict) -> str:
     content = payload.get("content", {})
 
@@ -114,6 +122,7 @@ def build_text_from_payload(payload: dict) -> str:
         parts.append("피해야 할 행동: " + " ".join(content["dont"]))
 
     return "\n".join(parts)
+
 
 def pretty_print_docs(docs):
     print("\n====== Retrieval Results ======\n")
@@ -181,7 +190,6 @@ def pretty_print_docs(docs):
 #         return final_docs
 
 
-
 #     except Exception as e:
 #         print(f"Error: {e}")
 #         return None
@@ -199,8 +207,10 @@ def operate_retriever(query_text, k=3):
         search_query = rewrite_query(query_text)
 
         client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
-        embeddings = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=OPENAI_API_KEY)
-        
+        embeddings = OpenAIEmbeddings(
+            model="text-embedding-3-small", openai_api_key=OPENAI_API_KEY
+        )
+
         # 🚀 2. 재작성된 쿼리로 벡터 생성
         query_vector = np.array(embeddings.embed_query(search_query))
 
@@ -220,9 +230,17 @@ def operate_retriever(query_text, k=3):
             if not text.strip():
                 continue
 
-            docs.append(Document(page_content=text,
-                    metadata={"retrieval": payload.get("retrieval"),
-                              "context": payload.get("context"),"id": p.id,"score": p.score}))
+            docs.append(
+                Document(
+                    page_content=text,
+                    metadata={
+                        "retrieval": payload.get("retrieval"),
+                        "context": payload.get("context"),
+                        "id": p.id,
+                        "score": p.score,
+                    },
+                )
+            )
             vectors.append(p.vector)
 
         if len(docs) == 0:
@@ -253,8 +271,6 @@ def operate_retriever(query_text, k=3):
 #     """
 #     팀원 3이 구현할 검색 로직 (유사도 검색, MMR 등)
 #     """
-
-
 
 
 # def run_retriever_example(query_text, k=3):
@@ -301,28 +317,28 @@ def operate_retriever(query_text, k=3):
 #     """
 #     # run_retriever_example로 검색 수행
 #     response = run_retriever_example(query_text, k=k)
-    
+
 #     if not response or not response.points:
 #         print("❌ 검색 결과가 없습니다.")
 #         return
-    
+
 #     print(f"\n✅ 총 {len(response.points)}개의 관련 문서를 찾았습니다.\n")
 #     print("=" * 80)
-    
+
 #     for i, point in enumerate(response.points, 1):
 #         payload = point.payload or {}
 #         content_box = payload.get("content", {})
-        
+
 #         # 문서 정보 추출
 #         situation = content_box.get("situation_summary", "내용 없음")
 #         advice = content_box.get("key_advice", [])
-        
+
 #         # advice 리스트를 문자열로 변환
 #         if isinstance(advice, list):
 #             advice_str = "\n   • ".join(advice) if advice else "조언 없음"
 #         else:
 #             advice_str = str(advice)
-        
+
 #         # 결과 출력
 #         print(f"\n📄 문서 #{i} (유사도 점수: {point.score:.4f})")
 #         print("-" * 80)
@@ -330,21 +346,16 @@ def operate_retriever(query_text, k=3):
 #         print(f"   {situation}")
 #         print(f"\n💡 핵심 조언:")
 #         print(f"   • {advice_str}")
-        
+
 #         # 추가 메타데이터가 있다면 출력
 #         if payload.get("metadata"):
 #             print(f"\n📊 추가 정보: {payload.get('metadata')}")
-        
+
 #         # 디버깅용 - content_box가 비어있으면 전체 payload 출력
 #         if not content_box:
 #             print(f"\n⚠️ [디버깅] 전체 Payload: {payload}")
-        
+
 #         print("=" * 80)
-    
+
 #     print()
 #     return response
-
-
-
-
-

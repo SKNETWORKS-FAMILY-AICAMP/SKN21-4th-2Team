@@ -13,6 +13,7 @@ from langchain_openai import ChatOpenAI
 # ===============================
 load_dotenv()
 
+
 # ===============================
 # 평가 실행 함수
 # ===============================
@@ -27,14 +28,11 @@ def run_evaluation():
         "answer_no_prompt": [],
         "answer_with_prompt": [],
         "relevancy_no_prompt": [],
-        "relevancy_with_prompt": []
+        "relevancy_with_prompt": [],
     }
 
     # Chat LLM (invoke 방식 사용)
-    llm = ChatOpenAI(
-        model="gpt-4o",
-        temperature=0
-    )
+    llm = ChatOpenAI(model="gpt-4o", temperature=0)
 
     for q in test_questions:
         print(f"\n📝 질문 처리 중: {q}")
@@ -55,6 +53,7 @@ def run_evaluation():
         # ======================================
         try:
             from retrieve_test import get_rag_response
+
             rag_response = get_rag_response(q, prompt_file="prompt.md")
             answer_with_prompt = rag_response.get("answer", "")
             print(f"🔹 Answer with prompt:\n{answer_with_prompt}")
@@ -66,15 +65,15 @@ def run_evaluation():
         # 3. Ragas answer_relevancy 평가
         # ======================================
         try:
-            dataset_no_prompt = Dataset.from_dict({
-                "question": [q],
-                "answer": [answer_no_prompt],
-            })
+            dataset_no_prompt = Dataset.from_dict(
+                {
+                    "question": [q],
+                    "answer": [answer_no_prompt],
+                }
+            )
 
             score_no_prompt = evaluate(
-                dataset=dataset_no_prompt,
-                metrics=[answer_relevancy],
-                llm=llm
+                dataset=dataset_no_prompt, metrics=[answer_relevancy], llm=llm
             )
 
             relevancy_no_prompt = score_no_prompt["answer_relevancy"]
@@ -83,15 +82,15 @@ def run_evaluation():
             relevancy_no_prompt = None
 
         try:
-            dataset_with_prompt = Dataset.from_dict({
-                "question": [q],
-                "answer": [answer_with_prompt],
-            })
+            dataset_with_prompt = Dataset.from_dict(
+                {
+                    "question": [q],
+                    "answer": [answer_with_prompt],
+                }
+            )
 
             score_with_prompt = evaluate(
-                dataset=dataset_with_prompt,
-                metrics=[answer_relevancy],
-                llm=llm
+                dataset=dataset_with_prompt, metrics=[answer_relevancy], llm=llm
             )
 
             relevancy_with_prompt = score_with_prompt["answer_relevancy"]

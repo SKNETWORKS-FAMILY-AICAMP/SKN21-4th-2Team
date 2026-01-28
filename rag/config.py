@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class Config:
     # LLM 모델 선정: 성능과 비용의 밸런스를 고려하여 GPT-4o-mini 또는 GPT-4o 선정
     MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")

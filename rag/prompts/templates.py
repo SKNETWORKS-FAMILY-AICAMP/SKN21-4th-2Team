@@ -28,71 +28,71 @@ PERSONA_FILE_MAP = {
 
 def load_base_system_prompt() -> str:
     """기본 시스템 프롬프트를 로드합니다."""
-    with open(BASE_SYSTEM_PROMPT_PATH, 'r', encoding='utf-8') as f:
+    with open(BASE_SYSTEM_PROMPT_PATH, "r", encoding="utf-8") as f:
         return f.read()
 
 
 def load_persona(youtuber_name: str) -> str:
     """
     선택된 유튜버의 페르소나를 로드합니다.
-    
+
     Args:
         youtuber_name: 유튜버 이름
-        
+
     Returns:
         페르소나 프롬프트 문자열. 유튜버를 찾을 수 없으면 None 반환.
     """
     persona_file = PERSONA_FILE_MAP.get(youtuber_name)
-    
+
     if persona_file is None:
         return None
-    
+
     persona_path = PERSONAS_DIR / persona_file
-    
+
     if not persona_path.exists():
         return None
-    
-    with open(persona_path, 'r', encoding='utf-8') as f:
+
+    with open(persona_path, "r", encoding="utf-8") as f:
         return f.read()
 
 
 def get_combined_prompt(youtuber_name: str) -> str:
     """
     기본 시스템 프롬프트와 유튜버 페르소나를 결합하여 완성된 프롬프트를 반환합니다.
-    
+
     Args:
         youtuber_name: 유튜버 이름
-        
+
     Returns:
         완성된 시스템 프롬프트 문자열
     """
     base_prompt = load_base_system_prompt()
     persona = load_persona(youtuber_name)
-    
+
     if persona is None:
         return "유튜버에 대해 잘 모르겠습니다."
-    
+
     # {persona} 변수를 실제 페르소나 내용으로 치환
     combined_prompt = base_prompt.format(persona=persona)
-    
+
     return combined_prompt
 
 
 def get_persona_prompt(youtuber_name: str = "김달"):
     """
     LangChain ChatPromptTemplate을 생성합니다.
-    
+
     Args:
         youtuber_name: 유튜버 이름 (필수)
-        
+
     Returns:
         ChatPromptTemplate 인스턴스
     """
     if youtuber_name is None:
         raise ValueError("youtuber_name은 필수 파라미터입니다.")
-    
+
     system_prompt = get_combined_prompt(youtuber_name)
-    
+
     template = f"""{system_prompt}
 
 # Context (RAG 검색 결과):
@@ -103,5 +103,5 @@ def get_persona_prompt(youtuber_name: str = "김달"):
 
 # Answer (반드시 {youtuber_name} 스타일로 답변하세요):
 """
-    
+
     return ChatPromptTemplate.from_template(template)

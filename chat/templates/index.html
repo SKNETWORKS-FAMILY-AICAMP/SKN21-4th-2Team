@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG 연애 상담소</title>
+    <style>
+        :root {
+            --bg-color: #1a1a2e;
+            --sidebar-color: #16213e;
+            --chat-bg: #0f3460;
+            --accent-color: #e94560;
+            --text-color: #ffffff;
+            --text-secondary: #a0a0a0;
+            --message-user: #e94560;
+            --message-bot: #16213e;
+        }
+
+        * {
+            box_sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mentor-select-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .mentor-select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.3s;
+            appearance: none;
+            -webkit-appearance: none; 
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        .mentor-select:focus {
+            border-color: var(--accent-color);
+        }
+
+        .mentor-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(22, 33, 62, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h2 {
+            font-size: 1.2rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scroll-behavior: smooth;
+            min-height: 0; /* Flexbox scroll fix */
+        }
+
+        /* Custom Scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            line-height: 1.6;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: var(--message-user);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot {
+            align-self: flex-start;
+            background-color: var(--message-bot);
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-sender {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            opacity: 0.7;
+        }
+
+        .input-area {
+            padding: 20px 30px;
+            background-color: var(--bg-color);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-wrapper {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            padding-right: 50px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-color);
+            font-size: 1rem;
+            resize: none;
+            height: 60px;
+            line-height: 1.5;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        .send-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            align-self: flex-end;
+            margin-bottom: 5px;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            justify-content: center;
+            height: 24px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background-color: white;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Markdown Styles (Simple) */
+        .message.bot p { margin-bottom: 10px; }
+        .message.bot p:last-child { margin-bottom: 0; }
+        .message.bot strong { color: var(--accent-color); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span>💕</span> RAG 상담소
+            </div>
+            
+            <div class="mentor-selection">
+                <label class="mentor-select-label">누구에게 상담받으실래요?</label>
+                <select id="mentorSelect" class="mentor-select">
+                    {% for youtuber in youtubers %}
+                    <option value="{{ youtuber }}">{{ youtuber }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mentor-info">
+                <p id="mentorDesc">
+                    선택하신 멘토의 스타일로<br>
+                    연애 고민을 상담해드립니다.<br>
+                    솔직하고 명쾌한 조언을<br>
+                    구해보세요!
+                </p>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-area">
+            <header class="chat-header">
+                <h2 id="chatTitle">상담 시작하기</h2>
+            </header>
+
+            <div id="chatMessages" class="chat-messages">
+                <!-- Welcome Message -->
+                <div class="message bot">
+                    <div class="message-sender">시스템</div>
+                    안녕하세요! 연애 고민이 있으신가요? 
+                    왼쪽에서 멘토를 선택하고 고민을 털어놓으세요.
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="userInput" placeholder="고민을 입력하세요... (Shift+Enter로 줄바꿈)" rows="1"></textarea>
+                    <button id="sendBtn" class="send-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- CSRF Token -->
+    {% csrf_token %}
+
+    <script>
+        const mentorSelect = document.getElementById('mentorSelect');
+        const chatTitle = document.getElementById('chatTitle');
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Auto-resize textarea
+        userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            if(this.value === '') this.style.height = '60px';
+        });
+
+        // Handle Enter key
+        userInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        sendBtn.addEventListener('click', sendMessage);
+
+        mentorSelect.addEventListener('change', function() {
+            chatTitle.textContent = this.value + "님과의 상담";
+            // Optional: Add a system message about switching mentors
+            addMessage('bot', `상담 멘토가 ${this.value}님으로 변경되었습니다.`);
+        });
+
+        // Initial setup
+        chatTitle.textContent = mentorSelect.value + "님과의 상담";
+
+        async function sendMessage() {
+            const question = userInput.value.trim();
+            if (!question) return;
+
+            const youtuber = mentorSelect.value;
+            
+            // Clear input
+            userInput.value = '';
+            userInput.style.height = '60px';
+
+            // Add user message
+            addMessage('user', question);
+
+            // Add loading indicator
+            const loadingId = addLoading();
+
+            try {
+                const response = await fetch('/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        question: question,
+                        youtuber: youtuber
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Remove loading
+                removeMessage(loadingId);
+
+                if (data.error) {
+                    addMessage('bot', `오류가 발생했습니다: ${data.error}`);
+                } else {
+                    addMessage('bot', data.answer, youtuber);
+                }
+
+            } catch (error) {
+                removeMessage(loadingId);
+                addMessage('bot', `서버 통신 중 오류가 발생했습니다.`);
+                console.error('Error:', error);
+            }
+        }
+
+        function addMessage(type, text, senderName) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${type}`;
+            
+            const sender = senderName ? senderName : (type === 'user' ? '나' : '시스템');
+            
+            // Simple newline to <br> conversion for display
+            const formattedText = text.replace(/\n/g, '<br>');
+
+            msgDiv.innerHTML = `
+                <div class="message-sender">${sender}</div>
+                <div>${formattedText}</div>
+            `;
+            
+            chatMessages.appendChild(msgDiv);
+            scrollToBottom();
+            return msgDiv;
+        }
+
+        function addLoading() {
+            const id = 'loading-' + Date.now();
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message bot';
+            msgDiv.id = id;
+            msgDiv.innerHTML = `
+                <div class="message-sender">생각 중...</div>
+                <div class="loading">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            `;
+            chatMessages.appendChild(msgDiv);
+            scrollToBottom();
+            return id;
+        }
+
+        function removeMessage(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
