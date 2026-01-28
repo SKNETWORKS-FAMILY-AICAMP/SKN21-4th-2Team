@@ -11,4 +11,7 @@ openai-whisper
 yt-dlp
 qdrant-client
 youtube-transcript-api
+django
+djangorestframework
+django-cors-headers
 
