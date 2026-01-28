@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from langchain_core.runnables import RunnableLambda
@@ -22,7 +22,7 @@ def index(request):
 @require_http_methods(["POST"])
 def chat(request):
     """
-    Handle chat requests.
+    Handle chat requests with streaming response.
     Expects JSON data with 'question' and 'youtuber'.
     """
     try:
@@ -34,11 +34,9 @@ def chat(request):
             return JsonResponse({'error': 'Missing question or youtuber selection'}, status=400)
 
         # Initialize RAG components
-        # Note: In a production app, LLM initialization might be cached or done globally
         llm = init_llm()
         
         # Retriever
-        # We wrap the operate_retriever in a RunnableLambda as per main.py usage
         retriever = RunnableLambda(lambda q: operate_retriever(q, k=5) or [])
         
         # Prompt
@@ -47,10 +45,19 @@ def chat(request):
         # Chain
         chain = create_chain(llm, retriever, prompt)
         
-        # Invoke
-        response = chain.invoke(question)
-        
-        return JsonResponse({'answer': response})
+        # Generator for streaming
+        def stream_generator():
+            try:
+                for chunk in chain.stream(question):
+                    # 만약 chunk가 문자열이 아니면 문자열로 변환
+                    content = str(chunk)
+                    if content:
+                        yield content
+            except Exception as e:
+                # 스트리밍 도중 에러 발생 시 처리 (클라이언트에 에러 텍스트 전송)
+                yield f"[Error generating response: {str(e)}]"
+
+        return StreamingHttpResponse(stream_generator(), content_type='text/plain')
 
     except Exception as e:
         print(f"Error processing chat request: {e}")

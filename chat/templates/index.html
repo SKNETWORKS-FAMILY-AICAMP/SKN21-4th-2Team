@@ -379,8 +379,11 @@
             // Add user message
             addMessage('user', question);
 
-            // Add loading indicator
-            const loadingId = addLoading();
+            // Create placeholder for bot message
+            // We use 'thinking...' style initially, then replace content
+            const botMsgDiv = addMessage('bot', '', youtuber);
+            const contentDiv = botMsgDiv.querySelector('div:last-child');
+            contentDiv.innerHTML = '<div class="loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
 
             try {
                 const response = await fetch('/chat/', {
@@ -395,21 +398,43 @@
                     })
                 });
 
-                const data = await response.json();
-                
-                // Remove loading
-                removeMessage(loadingId);
+                if (!response.ok) {
+                    const errorText = await response.text(); // Try to get error text
+                    throw new Error(errorText || `HTTP error! status: ${response.status}`);
+                }
 
-                if (data.error) {
-                    addMessage('bot', `오류가 발생했습니다: ${data.error}`);
-                } else {
-                    addMessage('bot', data.answer, youtuber);
+                // Setup stream reader
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let isFirstChunk = true;
+                let fullText = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    
+                    if (isFirstChunk) {
+                        contentDiv.innerHTML = ''; // Remove loading animation
+                        isFirstChunk = false;
+                    }
+
+                    fullText += chunk;
+                    // Simple conversion of newlines to <br> for display
+                    contentDiv.innerHTML = fullText.replace(/\n/g, '<br>');
+                    scrollToBottom();
                 }
 
             } catch (error) {
-                removeMessage(loadingId);
-                addMessage('bot', `서버 통신 중 오류가 발생했습니다.`);
                 console.error('Error:', error);
+                // If it was still loading, show error there
+                if (contentDiv.querySelector('.loading')) {
+                    contentDiv.innerHTML = '죄송합니다. 오류가 발생했습니다.';
+                } else {
+                    addMessage('bot', `오류가 발생했습니다: ${error.message}`);
+                }
             }
         }
 
