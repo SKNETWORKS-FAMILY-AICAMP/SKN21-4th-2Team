@@ -12,6 +12,9 @@ openai-whisper
 yt-dlp
 qdrant-client
 youtube-transcript-api
+django
+djangorestframework
+django-cors-headers
 
 ## 4th project requirements
 # Django - 전통적인 API, 애플리케이션 데이터 설계, RESTful API
