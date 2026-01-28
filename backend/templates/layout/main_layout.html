@@ -17,10 +17,8 @@
         로그인 안한 사람만 요청할 수 있는 메뉴: 회원가입, 로그인
         로그인 관계없이 요청할 수 있는 메뉴: 설문목록
         -->
-      
-        <div class="navbar-nav">
-            <!-- <a href="{% url 'polls:list' %}" class="nav-link">설문목록</a>
-
+            <!-- 
+            <a href="{% url 'chat:list' %}" class="nav-link">설문목록</a>
             {% if user.is_authenticated %}
                 <a href="{% url 'polls:vote_create' %}" class="nav-link">설문등록</a>
                 <a href="{% url 'account:detail' %}" class="nav-link">{{user.username}}</a>
@@ -30,7 +28,12 @@
                 <a href="{% url 'account:create' %}" class="nav-link">회원가입</a>
                 <a href="{% url 'account:login' %}" class="nav-link">로그인</a>
             {% endif %}
-            <a href="{% url 'chat:index' %}" class="nav-link">챗봇</a> -->
+            <a href="{% url 'chat:index' %}" class="nav-link">챗봇</a>  
+            -->
+        <div class="navbar-nav">
+
+            
+
             
         </div>
     </div>
