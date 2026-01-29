@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractUser
 # CustomUser:  추가할 field들 정의 (name, email, birthday, [profile_image])
 class CustomUser(AbstractUser):
 
-    nickname = models.CharField(
+    name = models.CharField(
         max_length=100,
         verbose_name="이름"# Form 관련 설정. 
                            # ModelForm을 만들 경우 form field 설정을 Model field에 한다.
@@ -16,5 +16,5 @@ class CustomUser(AbstractUser):
 
 
     def __str__(self):
-        return f"username: {self.username}, nickname: {self.nickname}"
+        return f"username: {self.username}, nickname: {self.name}"
 
