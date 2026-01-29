@@ -1,0 +1,22 @@
+# /etc/systemd/system/backend-wsgi.service
+
+[Unit]
+Description=Gunicorn daemon for Django Project
+After=network.target
+
+[Service]
+User=ubuntu
+Group=ubuntu
+
+Environment="PATH=/home/ubuntu/SKN21-4th-2Team/backend/.venv/bin"
+Environment="DJANGO_SETTINGS_MODULE=config.settings"
+
+WorkingDirectory=/home/ubuntu/SKN21-4th-2Team/backend
+ExecStart=/home/ubuntu/SKN21-4th-2Team/backend/.venv/bin/gunicorn --workers 3 --bind unix:/run/backend/gunicorn.sock config.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+RuntimeDirectory=backend
+RuntimeDirectoryMode=0755

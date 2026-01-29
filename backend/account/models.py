@@ -11,6 +11,7 @@ class CustomUser(AbstractUser):
         verbose_name="이름"# Form 관련 설정. 
                            # ModelForm을 만들 경우 form field 설정을 Model field에 한다.
     )
+    # urls = models.JSONField(null=True, blank=True)
     # uv pip install pillow
     # python manage.py  makemigrations, migrate
 
