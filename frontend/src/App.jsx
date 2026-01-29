@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import './App.css';
 
-// ⚠️ 이미지 파일명이 정확한지 확인하세요! (대소문자 구분함)
+// 이미지 파일 
 import heartA from './assets/heart_a.png';
 import heartClosed from './assets/heart_closed.png';
 import heartO from './assets/heart_o.png';
@@ -32,6 +32,9 @@ function App() {
   
   // 🔧 사이드바 열림/닫힘 상태
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+  // 🌙 다크모드 상태
+  const [isDarkMode, setIsDarkMode] = useState(false);
   
   // 🔐 인증 상태 (Django에서 관리할 예정)
   const [user, setUser] = useState(null);
@@ -255,7 +258,7 @@ function App() {
   };
 
   return (
-    <div className="main-container">
+    <div className={`main-container ${isDarkMode ? 'dark' : ''}`}>
       
       {/* 🍔 햄버거 토글 버튼 */}
       <div className="toggle-container">
@@ -279,6 +282,13 @@ function App() {
               </option>
             ))}
           </select>
+        </div>
+        
+        {/* 🌙 다크모드 토글 버튼 (하단 배치) */}
+        <div className="sidebar-bottom">
+          <button className="dark-mode-btn" onClick={() => setIsDarkMode(!isDarkMode)}>
+            {isDarkMode ? '☀️ 라이트' : '🌙 다크'}
+          </button>
         </div>
       </div>
 

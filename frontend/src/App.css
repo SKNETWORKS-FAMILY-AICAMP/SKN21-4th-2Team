@@ -122,6 +122,7 @@ body {
 .sidebar-section {
   padding: 20px;
   margin-left: -10px;
+  margin-top: 20px;
 }
 
 .section-label {
@@ -184,9 +185,10 @@ body {
 }
 
 .header-title {
-  font-size: 18px;
+  font-size: 33px;
   font-weight: 600;
   color: #333;
+  margin-top: 25px;
 }
 
 /* 10. 헤더 인증 버튼 */
@@ -285,8 +287,8 @@ body {
 
 /* 12. 캐릭터 이미지 */
 .bot-image {
-  width: 50px;
-  height: 50px;
+  width: 65px;
+  height: 65px;
   margin-right: 15px;
   object-fit: contain;
 }
@@ -480,4 +482,132 @@ body {
 
 .auth-switch button:hover {
   text-decoration: underline;
+}
+
+/* ============ 사이드바 하단 ============ */
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 20px;
+}
+
+.dark-mode-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dark-mode-btn:hover {
+  background-color: #555;
+}
+
+/* ============ 다크모드 ============ */
+.main-container.dark {
+  background-color: #1a1a2e;
+}
+
+.main-container.dark .toggle-container {
+  background-color: #16213e;
+}
+
+.main-container.dark .hamburger-btn {
+  color: #eee;
+}
+
+.main-container.dark .hamburger-btn:hover {
+  background-color: #0f3460;
+  color: #fff;
+}
+
+.main-container.dark .sidebar {
+  background-color: #16213e;
+  border-right-color: #0f3460;
+}
+
+.main-container.dark .section-label {
+  color: #aaa;
+}
+
+.main-container.dark .counselor-select {
+  background-color: #1a1a2e;
+  color: #eee;
+  border-color: #0f3460;
+}
+
+.main-container.dark .dark-mode-btn {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.main-container.dark .chat-area {
+  background-color: #1a1a2e;
+}
+
+.main-container.dark .chat-header {
+  background-color: #16213e;
+  color: #eee;
+}
+
+.main-container.dark .header-title {
+  color: #eee;
+}
+
+.main-container.dark .login-btn-header {
+  background-color: #e94560;
+}
+
+.main-container.dark .register-btn-header {
+  color: #e94560;
+  border-color: #e94560;
+}
+
+.main-container.dark .register-btn-header:hover {
+  background-color: #e94560;
+  color: white;
+}
+
+.main-container.dark .message-list {
+  background-color: #1a1a2e;
+}
+
+.main-container.dark .bubble.bot {
+  background-color: #16213e;
+  color: #eee;
+  border-color: #0f3460;
+}
+
+.main-container.dark .input-area {
+  background-color: #16213e;
+}
+
+.main-container.dark .input-wrapper {
+  background-color: #1a1a2e;
+}
+
+.main-container.dark .input-wrapper input {
+  color: #eee;
+}
+
+.main-container.dark .input-wrapper input::placeholder {
+  color: #888;
+}
+
+.main-container.dark .modal {
+  background-color: #16213e;
+  color: #eee;
+}
+
+.main-container.dark .modal h2 {
+  color: #eee;
+}
+
+.main-container.dark .modal input {
+  background-color: #1a1a2e;
+  color: #eee;
+  border-color: #0f3460;
 }
