@@ -1,0 +1,28 @@
+# /etc/nginx/sites-available/mypoll_chat
+
+server {
+    listen 80;
+    server_name <<AWS Public IP>>;
+
+    location /static/ {
+        alias /var/www/mypoll_chat/static/;
+    }
+
+    location /media/ {
+        alias /var/www/mypoll_chat/media/; 
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:run/mypoll_chat/gunicorn.sock;
+
+
+        chunked_transfer_encoding on;
+        gzip off;
+        proxy_buffering off;
+        proxy_request_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 30000;
+        proxy_send_timeout 30000;
+    }
+}
