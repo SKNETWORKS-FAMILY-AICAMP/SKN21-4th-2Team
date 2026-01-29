@@ -19,9 +19,9 @@ DOCS/presonal/*
 data/point_ids.txt
 data/temp_audio_raw_script.txt
 data/url_list.txt
+*.pem
 
 # DB
 **/db.sqlite3
 # agentic IDE
 .cursor
-*.pem
