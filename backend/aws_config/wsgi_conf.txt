@@ -8,11 +8,11 @@ After=network.target
 User=ubuntu
 Group=ubuntu
 
-Environment="PATH=/home/ubuntu/backend/.venv/bin"
+Environment="PATH=/home/ubuntu/SKN21-4th-2Team/backend/.venv/bin"
 Environment="DJANGO_SETTINGS_MODULE=config.settings"
 
-WorkingDirectory=/home/ubuntu/backend
-ExecStart=/home/ubuntu/backend/.venv/bin/gunicorn --workers 3 --bind unix:/run/backend/gunicorn.sock config.wsgi:application
+WorkingDirectory=/home/ubuntu/SKN21-4th-2Team/backend
+ExecStart=/home/ubuntu/SKN21-4th-2Team/backend/.venv/bin/gunicorn --workers 3 --bind unix:/run/backend/gunicorn.sock config.wsgi:application
 
 [Install]
 WantedBy=multi-user.target

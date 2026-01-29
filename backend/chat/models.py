@@ -22,6 +22,7 @@ class Chat(models.Model):
     # DateTimeField: 일시타입(datetime, datetime.datetime)
     # auto_now_add: insert 될 때 일시를 자동 입력.
     created_at = models.DateTimeField(auto_now_add=True)
+    # urls = models.JSONField(null=True, blank=True)
     
     def __str__(self):
         return f"{self.username}. {self.session_id}. {self.is_active}. {self.created_at}"
@@ -43,6 +44,7 @@ class Chat_Message(models.Model):
         # , related_name="my_choice" # q.my_choice.all()
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    # urls = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.message_id}. {self.role}. {self.message}. {self.session_id}. {self.created_at}"

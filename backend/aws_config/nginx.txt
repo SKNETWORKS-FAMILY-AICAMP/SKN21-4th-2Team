@@ -2,7 +2,7 @@
 
 server {
     listen 80;
-    server_name 52.79.147.197;
+    server_name 43.201.89.96;
 
     location /static/ {
         alias /var/www/backend/static/;
