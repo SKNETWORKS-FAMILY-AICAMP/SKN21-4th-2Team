@@ -6,11 +6,11 @@ import heartA from './assets/heart_a.png';
 import heartClosed from './assets/heart_closed.png';
 import heartO from './assets/heart_o.png';
 
-// 백엔드 API URL
+// 백엔드 API URL (Django)
 const API_BASE_URL = 'http://localhost:8000';
 
 function App() {
-  // 📋 상담사 목록 (templates.py의 PERSONA_FILE_MAP과 일치)
+  // 📋 상담사 목록
   const counselors = [
     { id: '권승현', name: '권승현' },
     { id: '주우재', name: '주우재' },
@@ -28,7 +28,17 @@ function App() {
   ];
 
   // 현재 선택된 상담사 (기본값: 김달)
-  const [selectedCounselor, setSelectedCounselor] = useState(counselors[4]); // 김달
+  const [selectedCounselor, setSelectedCounselor] = useState(counselors[4]);
+  
+  // 🔧 사이드바 열림/닫힘 상태
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+  // 🔐 인증 상태 (Django에서 관리할 예정)
+  const [user, setUser] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState('login');
+  const [authForm, setAuthForm] = useState({ name: '', nickname: '', password: '' });
+  const [authError, setAuthError] = useState('');
 
   // 대화 목록
   const [messages, setMessages] = useState([
@@ -53,20 +63,78 @@ function App() {
     scrollToBottom();
   }, [messages]);
 
-  // 🔄 Select에서 상담사 선택 시 실행되는 함수
-  const handleSelectChange = (e) => {
+  // 🔄 Select에서 상담사 변경
+  const handleCounselorChange = (e) => {
     const selected = counselors.find(c => c.id === e.target.value);
     if (selected && selected.id !== selectedCounselor.id) {
       setSelectedCounselor(selected);
       setIsTyping(false);
-      
-      // 대화 내용 유지하고, 상담사 변경 안내 메시지만 추가
       setMessages(prev => [...prev, { 
         id: Date.now(), 
         text: `💫 상담사가 ${selected.name}(으)로 변경되었습니다. 이어서 상담해주세요!`, 
         sender: 'bot' 
       }]);
     }
+  };
+
+  // 🍔 사이드바 토글
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  // 🔐 로그인 (Django 연동 예정)
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    
+    // 유효성 검사
+    if (!authForm.nickname.trim()) {
+      setAuthError('닉네임을 입력해주세요.');
+      return;
+    }
+    if (!authForm.password) {
+      setAuthError('비밀번호를 입력해주세요.');
+      return;
+    }
+    
+    // TODO: Django 로그인 API 연동
+    setUser({ username: authForm.nickname });
+    setShowAuthModal(false);
+    setAuthForm({ name: '', nickname: '', password: '' });
+  };
+
+  // 📝 회원가입 (Django 연동 예정)
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    
+    // 유효성 검사
+    if (!authForm.name.trim()) {
+      setAuthError('이름을 입력해주세요.');
+      return;
+    }
+    if (!authForm.nickname.trim()) {
+      setAuthError('닉네임을 입력해주세요.');
+      return;
+    }
+    if (!authForm.password) {
+      setAuthError('비밀번호를 입력해주세요.');
+      return;
+    }
+    if (authForm.password.length < 8) {
+      setAuthError('비밀번호는 8글자 이상이어야 합니다.');
+      return;
+    }
+    
+    // TODO: Django 회원가입 API 연동
+    setAuthMode('login');
+    setAuthForm({ name: '', nickname: '', password: '' });
+    alert('회원가입 성공! 로그인해주세요.');
+  };
+
+  // 🚪 로그아웃
+  const handleLogout = () => {
+    setUser(null);
   };
 
   // 🤖 말할 때 입 벙긋거리는 애니메이션
@@ -84,57 +152,94 @@ function App() {
     return () => clearInterval(interval);
   }, [isTyping]);
 
-  // 🚀 백엔드 RAG API 호출
-  const callRAGAPI = async (question, youtuberName) => {
+  // 🚀 Django 스트리밍 API 호출 (StreamingHttpResponse)
+  const callStreamingAPI = async (question, youtuberName) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat/stream/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: question,
           youtuber_name: youtuberName
         })
       });
 
-      if (!response.ok) {
-        throw new Error('API 응답 오류');
-      }
+      if (!response.ok) throw new Error('API 응답 오류');
+      
+      // 스트리밍 응답 처리
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      const botMessageId = Date.now() + 1;
+      
+      // 빈 메시지 먼저 추가
+      setMessages(prev => [...prev, { id: botMessageId, text: '', sender: 'bot' }]);
 
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        fullText += chunk;
+        
+        // 실시간으로 메시지 업데이트
+        setMessages(prev => prev.map(msg => 
+          msg.id === botMessageId ? { ...msg, text: fullText } : msg
+        ));
+      }
+      
+      setIsTyping(false);
+      return fullText;
+    } catch (error) {
+      console.error('API 호출 실패:', error);
+      // 폴백: 기본 타이핑 효과 사용
+      return null;
+    }
+  };
+
+  // 일반 API 호출 (폴백용)
+  const callAPI = async (question, youtuberName) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/chat/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: question,
+          youtuber_name: youtuberName
+        })
+      });
+
+      if (!response.ok) throw new Error('API 응답 오류');
       const data = await response.json();
       return data.answer || data.response || "응답을 받지 못했습니다.";
     } catch (error) {
       console.error('API 호출 실패:', error);
-      // API 실패 시 시뮬레이션 응답
       return `[${youtuberName}] 스타일 답변:\n\n연애 고민에 대해 진심으로 들어드릴게요. 지금 말씀하신 "${question}"에 대해서 천천히 이야기해볼까요?\n\n(※ 서버 연결 확인 필요)`;
     }
   };
 
   const sendMessage = async () => {
     if (inputText.trim() === "") return;
-
     const currentInput = inputText;
-    
-    // 1. 내 메시지 추가
     const userMessage = { id: Date.now(), text: currentInput, sender: 'user' };
     setMessages(prev => [...prev, userMessage]);
     setInputText("");
-
     setIsTyping(true);
-
-    // 2. RAG API 호출 (선택된 상담사 페르소나로)
-    const botResponseText = await callRAGAPI(currentInput, selectedCounselor.id);
     
-    // 3. 타이핑 효과로 응답 표시
-    typeWriterEffect(botResponseText);
+    // 스트리밍 API 시도
+    const streamResult = await callStreamingAPI(currentInput, selectedCounselor.id);
+    
+    // 스트리밍 실패 시 일반 API + 타이핑 효과
+    if (streamResult === null) {
+      const botResponseText = await callAPI(currentInput, selectedCounselor.id);
+      typeWriterEffect(botResponseText);
+    }
   };
 
   const typeWriterEffect = (fullText) => {
     let index = 0;
     const botMessageId = Date.now() + 1;
     setMessages(prev => [...prev, { id: botMessageId, text: "", sender: 'bot' }]);
-
     const interval = setInterval(() => {
       if (index < fullText.length) {
         const currentText = fullText.substring(0, index + 1);
@@ -146,39 +251,65 @@ function App() {
         clearInterval(interval);
         setIsTyping(false);
       }
-    }, 30); // 속도 약간 빠르게
+    }, 30);
   };
 
   return (
     <div className="main-container">
       
-      {/* 👉 채팅창 영역 (전체 화면) */}
+      {/* 🍔 햄버거 토글 버튼 */}
+      <div className="toggle-container">
+        <button className="hamburger-btn" onClick={toggleSidebar}>☰</button>
+      </div>
+
+      {/* 👈 왼쪽 사이드바 */}
+      <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
+        
+        {/* 상담사 선택 Select */}
+        <div className="sidebar-section">
+          <label className="section-label">상담사 선택</label>
+          <select 
+            className="counselor-select"
+            value={selectedCounselor.id}
+            onChange={handleCounselorChange}
+          >
+            {counselors.map((counselor) => (
+              <option key={counselor.id} value={counselor.id}>
+                {counselor.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* 👉 채팅창 영역 */}
       <div className="chat-area">
-        {/* 🔝 상단 헤더: 상담사 선택 Select */}
         <div className="chat-header">
-          <div className="header-title">💕 연애 상담소</div>
-          <div className="counselor-select-wrapper">
-            <label htmlFor="counselor-select">상담사: </label>
-            <select 
-              id="counselor-select"
-              value={selectedCounselor.id}
-              onChange={handleSelectChange}
-              className="counselor-select"
-            >
-              {counselors.map((counselor) => (
-                <option key={counselor.id} value={counselor.id}>
-                  {counselor.name}
-                </option>
-              ))}
-            </select>
+          <div className="header-title">연애 상담소</div>
+          
+          {/* 🔐 오른쪽 상단 인증 버튼 */}
+          <div className="header-auth">
+            {user ? (
+              <div className="user-info-header">
+                <span className="user-name-header">👤 {user.username}</span>
+                <button className="logout-btn-header" onClick={handleLogout}>로그아웃</button>
+              </div>
+            ) : (
+              <div className="auth-buttons">
+                <button className="login-btn-header" onClick={() => { setAuthMode('login'); setShowAuthModal(true); }}>
+                  로그인
+                </button>
+                <button className="register-btn-header" onClick={() => { setAuthMode('register'); setShowAuthModal(true); }}>
+                  회원가입
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* 💬 메시지 리스트 */}
         <div className="message-list">
           {messages.map((msg, index) => (
             <div key={msg.id} className={`message-wrapper ${msg.sender}`}>
-              {/* 봇이고, 가장 최근 메시지이고, 타이핑 중이면 -> 움직이는 이미지 */}
               {msg.sender === 'bot' && (
                 <img 
                   src={(isTyping && index === messages.length - 1) ? currentBotImage : heartA} 
@@ -186,29 +317,73 @@ function App() {
                   className="bot-image" 
                 />
               )}
-              <div className={`bubble ${msg.sender}`}>
-                {msg.text}
-              </div>
+              <div className={`bubble ${msg.sender}`}>{msg.text}</div>
             </div>
           ))}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* ⌨️ 입력 영역 */}
         <div className="input-area">
-          <input 
-            type="text" 
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder={`${selectedCounselor.name}에게 연애 상담하기...`}
-            disabled={isTyping}
-          />
-          <button onClick={sendMessage} disabled={isTyping}>
-            {isTyping ? '응답 중...' : '전송'}
-          </button>
+          <div className="input-wrapper">
+            <input 
+              type="text" 
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder={`${selectedCounselor.name}에게 연애 상담하기...`}
+              disabled={isTyping}
+            />
+            <button className="send-btn" onClick={sendMessage} disabled={isTyping}>
+              {isTyping ? '⏳' : '➤'}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* 🔐 로그인/회원가입 모달 */}
+      {showAuthModal && (
+        <div className="modal-overlay" onClick={() => setShowAuthModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowAuthModal(false)}>×</button>
+            <h2>{authMode === 'login' ? '로그인' : '회원가입'}</h2>
+            
+            <form onSubmit={authMode === 'login' ? handleLogin : handleRegister}>
+              {authMode === 'register' && (
+                <input
+                  type="text"
+                  placeholder="이름"
+                  value={authForm.name}
+                  onChange={(e) => setAuthForm({...authForm, name: e.target.value})}
+                />
+              )}
+              <input
+                type="text"
+                placeholder="닉네임"
+                value={authForm.nickname}
+                onChange={(e) => setAuthForm({...authForm, nickname: e.target.value})}
+              />
+              <input
+                type="password"
+                placeholder={authMode === 'register' ? "비밀번호 (8글자 이상)" : "비밀번호"}
+                value={authForm.password}
+                onChange={(e) => setAuthForm({...authForm, password: e.target.value})}
+              />
+              {authError && <div className="auth-error">{authError}</div>}
+              <button type="submit" className="auth-submit">
+                {authMode === 'login' ? '로그인' : '회원가입'}
+              </button>
+            </form>
+            
+            <div className="auth-switch">
+              {authMode === 'login' ? (
+                <span>계정이 없으신가요? <button onClick={() => setAuthMode('register')}>회원가입</button></span>
+              ) : (
+                <span>이미 계정이 있으신가요? <button onClick={() => setAuthMode('login')}>로그인</button></span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
