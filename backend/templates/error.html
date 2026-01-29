@@ -1,0 +1,20 @@
+<!-- templates/error.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+</head>
+<body>
+    <a href="/polls/welcome">Chat Error</a>
+    <h1>BASE_DIR/templates/error.html</h1>
+    <img src="/static/imgs/error.png">
+    <img src='{% static "imgs/error.png" %}'>
+    <p>
+        요청하신 것을 처리하지 못했습니다.<br>
+        에러메세지: {{error_message}}
+    </p>
+</body>
+</html>

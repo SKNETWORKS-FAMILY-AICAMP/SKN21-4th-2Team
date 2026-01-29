@@ -27,6 +27,6 @@ urlpatterns = [
     # polls/ 로 시작하는 url 경로로 요청이 들어오면 polls앱/urls.py 의 설정으로 가서 나머지를 확인.
     path("chat/", include("chat.urls")),
     path("account/", include("account.urls")),
-    
+
 ]
 

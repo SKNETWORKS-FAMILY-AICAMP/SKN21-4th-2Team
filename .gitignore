@@ -1,7 +1,7 @@
 # 가상환경
 .venv
 venv/
-
+.idea/
 # cache
 
 .env
@@ -19,3 +19,4 @@ docs/
 data/point_ids.txt
 data/temp_audio_raw_script.txt
 data/url_list.txt
+*.pem
