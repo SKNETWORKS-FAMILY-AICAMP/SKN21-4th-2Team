@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  web:
+    # Docker Hub에 올린 이미지 사용
+    image: seungeon2517/my-chatbot:latest
+    container_name: django_app
+    restart: always
+    # Django static 파일 수집 후 Gunicorn 실행
+    command: sh -c "python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 config.wsgi:application"
+    env_file:
+      - .env
+    expose:
+      - "8000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_server
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      # Django 컨테이너에서 생성된 static files를 공유받아 서빙
+      - static_volume:/app/static_files
+    depends_on:
+      - web
+
+volumes:
+  static_volume:

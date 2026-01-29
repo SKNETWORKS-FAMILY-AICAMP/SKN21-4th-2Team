@@ -1,0 +1,1 @@
+ssh -i "my-keypair.pem" ubuntu@3.37.107.210
