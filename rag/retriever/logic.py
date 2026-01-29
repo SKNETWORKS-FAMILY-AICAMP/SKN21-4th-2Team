@@ -195,10 +195,29 @@ def operate_retriever(query_text, k=3):
     print(f"--- 🔍 원래 질문: '{query_text}' ---")
 
     try:
+        # 환경 변수 확인
+        if not QDRANT_URL:
+            raise ValueError("QDRANT_URL 환경 변수가 설정되지 않았습니다. .env 파일을 확인하세요.")
+        if not QDRANT_API_KEY:
+            raise ValueError("QDRANT_API_KEY 환경 변수가 설정되지 않았습니다. .env 파일을 확인하세요.")
+        if not OPENAI_API_KEY:
+            raise ValueError("OPENAI_API_KEY 환경 변수가 설정되지 않았습니다. .env 파일을 확인하세요.")
+        
         # 🚀 1. Query Rewriting 적용 (검색용 쿼리 생성)
         search_query = rewrite_query(query_text)
 
-        client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+        # Qdrant 클라이언트 생성 (연결 오류 처리)
+        try:
+            client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+        except Exception as conn_error:
+            error_msg = f"Qdrant 서버 연결 실패: {conn_error}\n"
+            error_msg += f"QDRANT_URL: {QDRANT_URL}\n"
+            error_msg += "확인사항:\n"
+            error_msg += "1. Qdrant 서버가 실행 중인지 확인하세요\n"
+            error_msg += "2. QDRANT_URL이 올바른지 확인하세요 (예: http://localhost:6333 또는 클라우드 URL)\n"
+            error_msg += "3. 방화벽이 연결을 차단하지 않는지 확인하세요"
+            raise ConnectionError(error_msg) from conn_error
+        
         embeddings = OpenAIEmbeddings(model="text-embedding-3-small", openai_api_key=OPENAI_API_KEY)
         
         # 🚀 2. 재작성된 쿼리로 벡터 생성
@@ -244,9 +263,17 @@ def operate_retriever(query_text, k=3):
         final_docs = [d for _, d in ranked[:k]]
         return final_docs
 
+    except ConnectionError as e:
+        print(f"❌ 연결 오류: {e}")
+        return []
+    except ValueError as e:
+        print(f"❌ 설정 오류: {e}")
+        return []
     except Exception as e:
-        print(f"Error: {e}")
-        return None
+        print(f"❌ 오류 발생: {e}")
+        import traceback
+        traceback.print_exc()
+        return []
 
 
 # def get_retriever(vector_store, search_type="similarity", k=4):

@@ -1,0 +1,568 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block title %}❤️ RAG 연애 상담소{% endblock %}
+
+{% block extra_css %}
+/* 인트로 애니메이션 */
+#intro-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+#intro-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#intro-text {
+    background: var(--bg-color);
+    padding: 20px 40px;
+    border-radius: 40px;
+    color: var(--text-color);
+    font-size: 26px;
+    font-weight: bold;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    margin-top: 20px;
+}
+
+/* 채팅 컨테이너 */
+.chat-container {
+    display: flex;
+    height: calc(100vh - 180px);
+    gap: 20px;
+}
+
+/* 사이드바 */
+.sidebar-card {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.sidebar-card .card-body {
+    padding: 30px 20px;
+}
+
+.sidebar-card h5 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    text-align: center;
+}
+
+/* 메인 채팅 영역 */
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.chat-header h2 {
+    font-size: 32px;
+    color: var(--text-color);
+    margin: 0;
+}
+
+/* 메시지 영역 */
+.chat-messages-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.message {
+    margin-bottom: 20px;
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.user {
+    justify-content: flex-end;
+}
+
+.message.assistant {
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: 15px 20px;
+    border-radius: 20px;
+    word-wrap: break-word;
+}
+
+.message.user .message-bubble {
+    background-color: var(--message-user-bg);
+    color: #fff;
+    font-weight: 500;
+}
+
+.message.assistant .message-bubble {
+    background-color: var(--message-assistant-bg);
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.assistant-avatar {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+}
+
+.assistant-text {
+    flex: 1;
+    padding-top: 10px;
+}
+
+/* 입력 영역 */
+.chat-input-wrapper {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.input-group .form-control {
+    border-radius: 25px 0 0 25px;
+}
+
+.input-group .btn {
+    border-radius: 0 25px 25px 0;
+}
+
+/* 로딩 애니메이션 */
+.typing-indicator {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    padding: 15px 20px;
+    background-color: var(--message-assistant-bg);
+    border-radius: 20px;
+    max-width: 70px;
+}
+
+.typing-indicator.active {
+    display: flex;
+}
+
+.typing-dot {
+    width: 10px;
+    height: 10px;
+    background-color: var(--text-color);
+    border-radius: 50%;
+    animation: typing 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-10px);
+    }
+}
+
+/* 스크롤바 스타일 */
+.chat-messages-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-messages-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.chat-messages-wrapper::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.chat-messages-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #4a6ab5;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .chat-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .sidebar-card {
+        width: 100%;
+    }
+
+    .message-bubble {
+        max-width: 85%;
+    }
+}
+{% endblock %}
+
+{% block content %}
+<!-- 인트로 애니메이션 -->
+<div id="intro-overlay">
+    <img id="intro-image" src="{% static 'ai_streaming/images/heart_closed.png' %}" 
+         alt="Heart" style="width: 350px;" 
+         onerror="this.style.display='none'">
+    <div id="intro-text">당신의 연애 고민, 우리가 들어줄게요 ❤️</div>
+</div>
+
+<!-- 채팅 컨테이너 -->
+<div class="chat-container">
+    <!-- 사이드바 -->
+    <div class="sidebar-card card">
+        <div class="card-body">
+            <h5 class="card-title">상담사 선택</h5>
+            <select class="form-select" id="persona-select">
+                {% for persona in personas %}
+                <option value="{{ persona }}">{{ persona }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- 메인 채팅 영역 -->
+    <div class="chat-main">
+        <!-- 헤더 -->
+        <div class="chat-header">
+            <h2 id="header-title">❤️ <span id="current-persona">기본상담사</span>의 연애 상담소 ❤️</h2>
+        </div>
+
+        <!-- 메시지 영역 -->
+        <div class="chat-messages-wrapper" id="chat-messages">
+            <!-- 메시지들이 여기에 동적으로 추가됩니다 -->
+        </div>
+
+        <!-- 입력 영역 -->
+        <div class="chat-input-wrapper">
+            <div class="input-group">
+                <input type="text" class="form-control" id="user-input" 
+                       placeholder="고민을 털어놓으세요..." 
+                       onkeypress="if(event.key==='Enter') sendMessage()">
+                <button class="btn btn-primary" id="send-button" onclick="sendMessage()">
+                    <i class="bi bi-send-fill"></i> 전송
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let sessionId = generateUUID();
+    let currentPersona = '{{ personas.0 }}';
+    let isStreaming = false;
+
+    // UUID 생성 함수
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    // 인트로 애니메이션
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            document.getElementById('intro-overlay').classList.add('hidden');
+            initializeChat();
+        }, 2000);
+    });
+
+    // 채팅 초기화
+    async function initializeChat() {
+        try {
+            const response = await fetch('/ai/create-session/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    persona: currentPersona
+                })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                sessionId = data.session_id;
+                addMessage('assistant', data.message);
+            }
+        } catch (error) {
+            console.error('초기화 오류:', error);
+        }
+    }
+
+    // CSRF 토큰 가져오기
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // 메시지 추가
+    function addMessage(role, content) {
+        const messagesDiv = document.getElementById('chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${role}`;
+        
+        if (role === 'assistant') {
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    <img class="assistant-avatar" 
+                         src="{% static 'ai_streaming/images/heart_closed.png' %}" 
+                         alt="상담사"
+                         onerror="this.style.display='none'">
+                    <div class="assistant-text">${content}</div>
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="message-bubble">${content}</div>
+            `;
+        }
+        
+        messagesDiv.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // 타이핑 인디케이터 표시
+    function showTypingIndicator() {
+        const messagesDiv = document.getElementById('chat-messages');
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message assistant';
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = `
+            <div class="typing-indicator active">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        `;
+        messagesDiv.appendChild(typingDiv);
+        scrollToBottom();
+    }
+
+    // 타이핑 인디케이터 제거
+    function hideTypingIndicator() {
+        const typingDiv = document.getElementById('typing-indicator');
+        if (typingDiv) {
+            typingDiv.remove();
+        }
+    }
+
+    // 메시지 전송
+    async function sendMessage() {
+        if (isStreaming) return;
+        
+        const input = document.getElementById('user-input');
+        const message = input.value.trim();
+        
+        if (!message) return;
+        
+        // 사용자 메시지 표시
+        addMessage('user', message);
+        input.value = '';
+        
+        // 전송 버튼 비활성화
+        isStreaming = true;
+        document.getElementById('send-button').disabled = true;
+        
+        // 타이핑 인디케이터 표시
+        showTypingIndicator();
+        
+        try {
+            const response = await fetch('/ai/chat-stream/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    session_id: sessionId,
+                    message: message,
+                    persona: currentPersona
+                })
+            });
+            
+            // 타이핑 인디케이터 제거
+            hideTypingIndicator();
+            
+            // 스트리밍 응답 처리
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let assistantMessage = '';
+            let messageElement = null;
+            
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                
+                const chunk = decoder.decode(value);
+                const lines = chunk.split('\n');
+                
+                for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                        const data = JSON.parse(line.slice(6));
+                        
+                        if (data.token) {
+                            assistantMessage += data.token;
+                            
+                            // 메시지 엘리먼트가 없으면 생성
+                            if (!messageElement) {
+                                const messagesDiv = document.getElementById('chat-messages');
+                                messageElement = document.createElement('div');
+                                messageElement.className = 'message assistant';
+                                messageElement.innerHTML = `
+                                    <div class="message-bubble">
+                                        <img class="assistant-avatar" 
+                                             src="{% static 'ai_streaming/images/heart_closed.png' %}" 
+                                             alt="상담사"
+                                             onerror="this.style.display='none'">
+                                        <div class="assistant-text"></div>
+                                    </div>
+                                `;
+                                messagesDiv.appendChild(messageElement);
+                            }
+                            
+                            // 메시지 업데이트
+                            const textDiv = messageElement.querySelector('.assistant-text');
+                            textDiv.textContent = assistantMessage + '▌';
+                            scrollToBottom();
+                        }
+                        
+                        if (data.done) {
+                            // 커서 제거
+                            if (messageElement) {
+                                const textDiv = messageElement.querySelector('.assistant-text');
+                                textDiv.textContent = assistantMessage;
+                            }
+                        }
+                        
+                        if (data.error) {
+                            console.error('스트리밍 오류:', data.error);
+                            if (!messageElement) {
+                                addMessage('assistant', data.error);
+                            }
+                        }
+                    }
+                }
+            }
+            
+        } catch (error) {
+            console.error('전송 오류:', error);
+            hideTypingIndicator();
+            addMessage('assistant', '죄송합니다. 오류가 발생했습니다.');
+        } finally {
+            isStreaming = false;
+            document.getElementById('send-button').disabled = false;
+        }
+    }
+
+    // 페르소나 변경
+    document.getElementById('persona-select').addEventListener('change', async function(e) {
+        const newPersona = e.target.value;
+        
+        if (confirm(`${newPersona}로 상담사를 변경하시겠습니까? (대화 기록이 초기화됩니다)`)) {
+            try {
+                const response = await fetch('/ai/change-persona/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        session_id: sessionId,
+                        persona: newPersona
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    currentPersona = newPersona;
+                    document.getElementById('current-persona').textContent = newPersona;
+                    
+                    // 채팅 기록 초기화
+                    document.getElementById('chat-messages').innerHTML = '';
+                    addMessage('assistant', data.message);
+                }
+            } catch (error) {
+                console.error('페르소나 변경 오류:', error);
+            }
+        } else {
+            // 변경 취소 시 원래 값으로 복원
+            e.target.value = currentPersona;
+        }
+    });
+
+    // 자동 스크롤
+    function scrollToBottom() {
+        const messagesDiv = document.getElementById('chat-messages');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // 초기 페르소나 설정
+    if ('{{ personas.0 }}') {
+        currentPersona = '{{ personas.0 }}';
+        document.getElementById('current-persona').textContent = currentPersona;
+    }
+</script>
+{% endblock %}

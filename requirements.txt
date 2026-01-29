@@ -1,3 +1,4 @@
+## 3rd project requirements
 python-dotenv
 langchain
 langchain-core
@@ -12,3 +13,21 @@ yt-dlp
 qdrant-client
 youtube-transcript-api
 
+## 4th project requirements
+# Django - 전통적인 API, 애플리케이션 데이터 설계, RESTful API
+Django>=5.0.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.0
+django-environ>=0.11.0
+django-bootstrap5
+
+# 데이터베이스 연결 (Amazon RDS)
+psycopg2-binary>=2.9.9  # PostgreSQL용
+
+# 기타 유틸리티
+pydantic-settings>=2.1.0
+
+#RAG
+sentence-transformers
+rank-bm25
+scikit-learn

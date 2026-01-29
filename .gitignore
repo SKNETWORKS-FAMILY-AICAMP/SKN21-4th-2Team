@@ -11,10 +11,15 @@ raw_data/
 # test
 test/
 
-# docs
-docs/
+# personal_docs
+DOCS/presonal/*
 
 # raw_data
 data/point_ids.txt
 data/temp_audio_raw_script.txt
 data/url_list.txt
+
+# DB
+**/db.sqlite3
+# agentic IDE
+.cursor
