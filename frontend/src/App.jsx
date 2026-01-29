@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import axios from "axios";
 import './App.css';
 
 // ⚠️ 이미지 파일명이 정확한지 확인하세요! (대소문자 구분함)
@@ -222,10 +223,20 @@ function App() {
     if (inputText.trim() === "") return;
     const currentInput = inputText;
     const userMessage = { id: Date.now(), text: currentInput, sender: 'user' };
+    const res = await axios.post("http://127.0.0.1:8000/chat/stream",
+        { message },
+        {
+        headers: {
+            "Content-Type": "application/json",
+        },
+        }
+    );
+    setAnswer(res.data.answer);
+
     setMessages(prev => [...prev, userMessage]);
     setInputText("");
     setIsTyping(true);
-    
+
     // 스트리밍 API 시도
     const streamResult = await callStreamingAPI(currentInput, selectedCounselor.id);
     

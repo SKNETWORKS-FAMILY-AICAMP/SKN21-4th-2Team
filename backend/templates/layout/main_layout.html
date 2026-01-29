@@ -13,9 +13,9 @@
  <nav class="navbar navbar-expand-sm bg-success bg-opacity-10 mt-3">
     <div class="container">
         <div class="navbar-nav">
-            <!--a href="{% url 'account:welcome' %}" class="nav-link">main page</a-->
+            <a href="{% url 'account:welcome' %}" class="nav-link">메인 화면</a>
             {% if user.is_authenticated %}
-                <a href="{% url 'account:welcome' %}" class="nav-link">메인 화면</a>
+                <a href="{% url 'chat:stream' %}" class="nav-link">채팅 화면(temp)</a>
                 <a href="{% url 'account:detail' %}" class="nav-link">{{user.username}}</a>
                 <a href="{% url 'account:logout' %}" class="nav-link">로그아웃</a>
             {% endif %}
