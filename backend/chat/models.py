@@ -49,6 +49,15 @@ class Chat_Message(models.Model):
     def __str__(self):
         return f"{self.message_id}. {self.role}. {self.message}. {self.session_id}. {self.created_at}"
 
+# 보기 테이블
+class Persona(models.Model):
+
+    persona_id = models.CharField(max_length=10)
+    youtuber_name = models.CharField(max_length=10) # 문자열타입 (user 또는 assistant)
+
+    def __str__(self):
+        return f"{self.message_id}. {self.role}. {self.message}. {self.session_id}. {self.created_at}"
+
 # create table choice(
 #     choice_text varchar(200) not null,
 #     votes int not null default 0,
