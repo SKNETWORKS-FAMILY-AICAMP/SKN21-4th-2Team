@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = []
-#public IP: 45.201.89.63
+#public IP: 45.201.89.96
 
 # Application definition
 
@@ -96,15 +96,16 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ]
 }
-CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_ALL_ORIGINS = True
 #CORS_ORIGIN_WHITELIST = []
-CORS_ALLOW_CREDENTIALS = True
+#CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173/",
-    "http://127.0.0.1:5173/",
-    "http://localhost:8000/",
-    "http://127.0.0.1:8000/",
+#     "http://localhost:5173/",
+#     "http://127.0.0.1:5173/",
+#     "http://localhost:8000/",
+#     "http://127.0.0.1:8000/",
+      #"45.201.89.63:8000"
 ]
 
 CORS_ALLOW_METHODS = (

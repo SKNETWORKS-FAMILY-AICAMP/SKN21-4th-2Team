@@ -223,10 +223,14 @@ function App() {
     if (inputText.trim() === "") return;
     const currentInput = inputText;
     const userMessage = { id: Date.now(), text: currentInput, sender: 'user' };
+    const res = await axios.post("http://127.0.0.1:8000/chat/stream_chat/",
+        {message: message});
+    setAnswer(res.data.answer);
+
     setMessages(prev => [...prev, userMessage]);
     setInputText("");
     setIsTyping(true);
-    
+
     // 스트리밍 API 시도
     const streamResult = await callStreamingAPI(currentInput, selectedCounselor.id);
     
