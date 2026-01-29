@@ -1,4 +1,4 @@
-# /etc/systemd/system/mypoll_chat-wsgi.service
+# /etc/systemd/system/backend-wsgi.service
 
 [Unit]
 Description=Gunicorn daemon for Django Project
@@ -8,15 +8,15 @@ After=network.target
 User=ubuntu
 Group=ubuntu
 
-Environment="PATH=/home/ubuntu/mypoll_chat/.venv/bin"
+Environment="PATH=/home/ubuntu/backend/.venv/bin"
 Environment="DJANGO_SETTINGS_MODULE=config.settings"
 
-WorkingDirectory=/home/ubuntu/mypoll_chat
-ExecStart=/home/ubuntu/mypoll_chat/.venv/bin/gunicorn --workers 3 --bind unix:/run/mypoll_chat/gunicorn.sock config.wsgi:application
+WorkingDirectory=/home/ubuntu/backend
+ExecStart=/home/ubuntu/backend/.venv/bin/gunicorn --workers 3 --bind unix:/run/backend/gunicorn.sock config.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
 
 [Service]
-RuntimeDirectory=mypoll_chat
+RuntimeDirectory=backend
 RuntimeDirectoryMode=0755

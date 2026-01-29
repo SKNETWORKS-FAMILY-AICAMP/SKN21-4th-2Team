@@ -1,20 +1,20 @@
-# /etc/nginx/sites-available/mypoll_chat
+# /etc/nginx/sites-available/backend
 
 server {
     listen 80;
-    server_name <<AWS Public IP>>;
+    server_name 52.79.147.197;
 
     location /static/ {
-        alias /var/www/mypoll_chat/static/;
+        alias /var/www/backend/static/;
     }
 
     location /media/ {
-        alias /var/www/mypoll_chat/media/; 
+        alias /var/www/backend/media/; 
     }
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:run/mypoll_chat/gunicorn.sock;
+        proxy_pass http://unix:run/backend/gunicorn.sock;
 
 
         chunked_transfer_encoding on;
