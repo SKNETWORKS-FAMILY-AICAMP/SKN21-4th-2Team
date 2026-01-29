@@ -97,15 +97,16 @@ REST_FRAMEWORK = {
     ]
 }
 #CORS_ALLOW_ALL_ORIGINS = True
-#CORS_ORIGIN_WHITELIST = []
-#CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_WHITELIST = [
+#     "http://localhost:5173",
+#      "http://127.0.0.1:5173",
+# ]
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:5173/",
-#     "http://127.0.0.1:5173/",
-#     "http://localhost:8000/",
-#     "http://127.0.0.1:8000/",
-      #"45.201.89.63:8000"
+     "http://localhost:5173",
+     "http://127.0.0.1:5173",
+     "http://43.201.89.96",
 ]
 
 CORS_ALLOW_METHODS = (

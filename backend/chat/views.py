@@ -7,7 +7,8 @@ from django.urls import reverse
 from .models import Chat, Chat_Message
 from .serializers import PostSerializer
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django.db import transaction  # DB Transaction 처리.
 from django.core.paginator import Paginator
@@ -48,13 +49,6 @@ def get_chain():
     chat = ChatOpenAI(model_name="gpt-5-mini")
     return prompt | chat
 
-class chatting(generics.ListCreateAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = PostSerializer
-
-class chat_session(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Chat_Message.objects.all()
-    serializer_class = PostSerializer
 
 # 설문 welcome page view
 #  요청 -> 인삿말 화면을 응답.
@@ -72,7 +66,7 @@ def welcome(request):
     print(type(response)) # server를 실행한 터미널에 출력.
     return response
 
-
+@permission_classes([AllowAny])
 @api_view(['POST'])
 def stream_chat(request):
     # 요청파라미터(GET방식)으로 사용자 질의를 받는다. "messages":"질의"

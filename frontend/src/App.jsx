@@ -223,8 +223,14 @@ function App() {
     if (inputText.trim() === "") return;
     const currentInput = inputText;
     const userMessage = { id: Date.now(), text: currentInput, sender: 'user' };
-    const res = await axios.post("http://127.0.0.1:8000/chat/stream_chat/",
-        {message: message});
+    const res = await axios.post("http://127.0.0.1:8000/chat/stream",
+        { message },
+        {
+        headers: {
+            "Content-Type": "application/json",
+        },
+        }
+    );
     setAnswer(res.data.answer);
 
     setMessages(prev => [...prev, userMessage]);
