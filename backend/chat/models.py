@@ -52,7 +52,7 @@ class Chat_Message(models.Model):
 # 보기 테이블
 class Persona(models.Model):
 
-    persona_id = models.CharField(max_length=10)
+    persona_id = models.IntegerField(primary_key=True)
     youtuber_name = models.CharField(max_length=10) # 문자열타입 (user 또는 assistant)
 
     def __str__(self):
