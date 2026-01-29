@@ -5,6 +5,8 @@ from django.urls import path, include
 
 chat_object = Chat
 Chat_Message_object = Chat_Message
+Persona_object = Persona
 # admin.site.register(chat, Chat_Message)
 admin.site.register(chat_object)
 admin.site.register(Chat_Message_object)
+admin.site.register(Persona_object)
