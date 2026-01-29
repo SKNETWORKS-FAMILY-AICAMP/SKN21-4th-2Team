@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import axios from "axios";
 import './App.css';
 
 // ⚠️ 이미지 파일명이 정확한지 확인하세요! (대소문자 구분함)
