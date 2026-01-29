@@ -1,7 +1,7 @@
 # 가상환경
 .venv
 venv/
-
+.idea/
 # cache
 
 .env
@@ -24,3 +24,4 @@ data/url_list.txt
 **/db.sqlite3
 # agentic IDE
 .cursor
+*.pem
