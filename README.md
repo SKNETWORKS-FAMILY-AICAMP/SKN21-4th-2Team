@@ -7,8 +7,7 @@
 	
 | [김승룡] | [정덕규] | [이의정] | [진승언] | [이명준] |
 | :---: | :---: | :---: | :---: | :---: |
-| <img src="https://loremflickr.com/200/200/dog?lock=1" width="120" alt="dog1"> | <img src="https://loremflickr.com/200/200/dog?lock=2" width="120" alt="dog2"> | <img src="https://loremflickr.com/200/200/dog?lock=3" width="120" alt="dog3"> | <img src="https://loremflickr.com/200/200/dog?lock=4" width="120" alt="dog4"> | <img src="https://loremflickr.com/200/200/dog?lock=5" width="120" alt="dog5"> |
-
+| <img src="https://loremflickr.com/200/200/dog?lock=1" width="120" alt="dog1"> | <img src="https://loremflickr.com/200/200/dog?lock=20" width="120" alt="dog2"> | <img src="https://loremflickr.com/200/200/dog?lock=30" width="120" alt="dog3"> | <img src="https://loremflickr.com/200/200/dog?lock=4" width="120" alt="dog4"> | <img src="https://loremflickr.com/200/200/dog?lock=5" width="120" alt="dog5"> |
 </div>
 
 <br>
