@@ -9,17 +9,18 @@ from django.db import models
 
 
 class AccountCustomuser(models.Model):
+    id = models.BigAutoField(primary_key=True)
     password = models.CharField(max_length=128)
     last_login = models.DateTimeField(blank=True, null=True)
-    is_superuser = models.BooleanField()
+    is_superuser = models.IntegerField()
     username = models.CharField(unique=True, max_length=150)
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     email = models.CharField(max_length=254)
-    is_staff = models.BooleanField()
-    is_active = models.BooleanField()
+    is_staff = models.IntegerField()
+    is_active = models.IntegerField()
     date_joined = models.DateTimeField()
-    nickname = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
 
     class Meta:
         managed = False
@@ -27,6 +28,7 @@ class AccountCustomuser(models.Model):
 
 
 class AccountCustomuserGroups(models.Model):
+    id = models.BigAutoField(primary_key=True)
     customuser = models.ForeignKey(AccountCustomuser, models.DO_NOTHING)
     group = models.ForeignKey('AuthGroup', models.DO_NOTHING)
 
@@ -37,6 +39,7 @@ class AccountCustomuserGroups(models.Model):
 
 
 class AccountCustomuserUserPermissions(models.Model):
+    id = models.BigAutoField(primary_key=True)
     customuser = models.ForeignKey(AccountCustomuser, models.DO_NOTHING)
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
@@ -55,6 +58,7 @@ class AuthGroup(models.Model):
 
 
 class AuthGroupPermissions(models.Model):
+    id = models.BigAutoField(primary_key=True)
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
@@ -65,9 +69,9 @@ class AuthGroupPermissions(models.Model):
 
 
 class AuthPermission(models.Model):
+    name = models.CharField(max_length=255)
     content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
     codename = models.CharField(max_length=100)
-    name = models.CharField(max_length=255)
 
     class Meta:
         managed = False
@@ -77,7 +81,7 @@ class AuthPermission(models.Model):
 
 class ChatChat(models.Model):
     session_id = models.CharField(primary_key=True, max_length=32)
-    is_active = models.BooleanField()
+    is_active = models.IntegerField()
     created_at = models.DateTimeField()
     username = models.ForeignKey(AccountCustomuser, models.DO_NOTHING)
 
@@ -98,7 +102,17 @@ class ChatChatMessage(models.Model):
         db_table = 'chat_chat_message'
 
 
+class ChatPersona(models.Model):
+    persona_id = models.IntegerField(primary_key=True)
+    youtuber_name = models.CharField(max_length=10)
+
+    class Meta:
+        managed = False
+        db_table = 'chat_persona'
+
+
 class DjangoAdminLog(models.Model):
+    action_time = models.DateTimeField()
     object_id = models.TextField(blank=True, null=True)
     object_repr = models.CharField(max_length=200)
     action_flag = models.PositiveSmallIntegerField()
@@ -123,6 +137,7 @@ class DjangoContentType(models.Model):
 
 
 class DjangoMigrations(models.Model):
+    id = models.BigAutoField(primary_key=True)
     app = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     applied = models.DateTimeField()

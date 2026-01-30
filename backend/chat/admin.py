@@ -1,10 +1,12 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+from .models import Chat, Chat_Message, Persona
+from django.urls import path, include
 
-from .models import Chat, Chat_Message
-# .models -> .: 현재 모듈(admin.py)와 같은 패키지를 가리키는 것.
-
-# Register your models here.
-# 관리자 앱에서 Model의 Data를 관리할 수 있도록 등록.
-## admin.site.register(모델클래스)
-admin.site.register(Chat)
-admin.site.register(Chat_Message)
+chat_object = Chat
+Chat_Message_object = Chat_Message
+Persona_object = Persona
+# admin.site.register(chat, Chat_Message)
+admin.site.register(chat_object)
+admin.site.register(Chat_Message_object)
+admin.site.register(Persona_object)
