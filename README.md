@@ -65,6 +65,8 @@
 
 <br>
 
+
+
 ## 💻 기술 스택 & 사용한 모델
 
 | 분야 | 사용 도구 |
@@ -74,7 +76,7 @@
 | **Backend** | ![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white) ![Gunicorn](https://img.shields.io/badge/gunicorn-%298729.svg?style=for-the-badge&logo=gunicorn&logoColor=white) |
 | **Infrastructure** | ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white) |
 | **Collaboration Tool** | ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white) |
-| **Vector DB** | ![ChromaDB](https://img.shields.io/badge/ChromaDB-orange?style=for-the-badge) (사용하신 DB로 수정) |
+| **Vector DB** | ![Qdrant](https://img.shields.io/badge/qdrant-%23bd1c2b.svg?style=for-the-badge&logo=qdrant&logoColor=white) |
 | **Orchestration** | ![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white) |
 
 
