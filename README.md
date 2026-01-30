@@ -6,8 +6,8 @@
 <div align="center">
 	
 | [김승룡] | [정덕규] | [이의정] | [진승언] | [이명준] |
-| :----------------------------------------: | :----------------------------------------: | :----------------------------------------: | :----------------------------------------: | :----------------------------------------: |
-| <img src="data/image/BSJ.png" width="120"> | <img src="data/image/PSH.png" width="120"> | <img src="data/image/LSW.png" width="120"> | <img src="data/image/KSU.png" width="120"> | <img src="data/image/PJH.png" width="120"> |
+| :---: | :---: | :---: | :---: | :---: |
+| <img src="https://loremflickr.com/200/200/dog?lock=1" width="120" alt="dog1"> | <img src="https://loremflickr.com/200/200/dog?lock=2" width="120" alt="dog2"> | <img src="https://loremflickr.com/200/200/dog?lock=3" width="120" alt="dog3"> | <img src="https://loremflickr.com/200/200/dog?lock=4" width="120" alt="dog4"> | <img src="https://loremflickr.com/200/200/dog?lock=5" width="120" alt="dog5"> |
 
 </div>
 
