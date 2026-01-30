@@ -65,7 +65,7 @@
 
 <br>
 
-###데이터전처리
+
 ## 📊 데이터 구축 및 검색 프로세스 (Data Processing & RAG Flow)
 
 ### 1. 데이터 수집 및 전처리 자동화 (Data Pipeline)
