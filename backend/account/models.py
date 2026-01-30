@@ -6,10 +6,16 @@ from django.contrib.auth.models import AbstractUser
 # CustomUser:  추가할 field들 정의 (name, email, birthday, [profile_image])
 class CustomUser(AbstractUser):
 
+    id = models.AutoField(primary_key=True)
     name = models.CharField(
         max_length=100,
         verbose_name="이름"# Form 관련 설정. 
                            # ModelForm을 만들 경우 form field 설정을 Model field에 한다.
+    )
+    nickname = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name="닉네임" # ModelForm을 만들 경우 form field 설정을 Model field에 한다.
     )
     # urls = models.JSONField(null=True, blank=True)
     # uv pip install pillow

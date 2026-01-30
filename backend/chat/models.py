@@ -2,6 +2,7 @@
 #  모델 클래스들을 정의
 from django.db import models
 from account.models import CustomUser
+# from chat.models import Role
 import uuid
 
 # 모델 클래스 정의 - Question(설문질문) - Choice(설문의 보기)
@@ -11,49 +12,42 @@ import uuid
 
 # Model class 정의 할 때 primary key Field를 선언하지 않으면, 
 class Chat(models.Model):
-    # Field 정의: 변수명-(instance변수명, column 이름)
-    #             Field 객체를 할당. Field객체 - column 설정(type, null허용여부,..)
-    username = models.ForeignKey(
-        CustomUser, # 참조할 Model Class
-        on_delete=models.CASCADE # 참조 값이 삭제 된 경우 어떻게 할지 -> cascade: 삭제
-    ) #   
-    session_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE
+    )
+    session_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     is_active = models.BooleanField(default=True)
-    # DateTimeField: 일시타입(datetime, datetime.datetime)
-    # auto_now_add: insert 될 때 일시를 자동 입력.
     created_at = models.DateTimeField(auto_now_add=True)
-    # urls = models.JSONField(null=True, blank=True)
     
     def __str__(self):
-        return f"{self.username}. {self.session_id}. {self.is_active}. {self.created_at}"
+        return f"{self.id}. {self.user_id}. {self.session_id}. {self.is_active}. {self.created_at}"
 
-    # create table question(
-    #     question_text varchar(200),
-    #     pub_date datetime current_timestamp
-    # )
+
+# 보기 테이블
+class Role(models.Model):
+
+    role_id = models.AutoField(primary_key=True)
+    role = models.CharField(unique=True, max_length=50) # 문자열타입 (user 또는 상담사 이름)
+
+    def __str__(self):
+        return f"{self.role_id}. {self.role}"
 
 # 보기 테이블
 class Chat_Message(models.Model):
 
     message_id = models.AutoField(primary_key=True)
-    role = models.CharField(max_length=10) # 문자열타입 (user 또는 assistant)
+    role_id = models.ForeignKey(
+        Role, # 참조할 Model Class
+        on_delete=models.DO_NOTHING
+    )
     message = models.TextField() # 긴 문자열 타입
     session_id = models.ForeignKey(
         Chat, # 참조할 Model Class
-        on_delete=models.CASCADE # 참조 값이 삭제 된 경우 어떻게 할지 -> cascade: 삭제
-        # , related_name="my_choice" # q.my_choice.all()
+        on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    # urls = models.JSONField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.message_id}. {self.role}. {self.message}. {self.session_id}. {self.created_at}"
-
-# 보기 테이블
-class Persona(models.Model):
-
-    persona_id = models.IntegerField(primary_key=True)
-    youtuber_name = models.CharField(max_length=10) # 문자열타입 (user 또는 assistant)
 
     def __str__(self):
         return f"{self.message_id}. {self.role}. {self.message}. {self.session_id}. {self.created_at}"
