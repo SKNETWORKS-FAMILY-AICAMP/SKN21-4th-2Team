@@ -67,23 +67,6 @@
 
 ---
 
-# 💻 기술 스택 & 사용한 모델
-
-
-| 분야                    | 사용 도구                                                                                                                                                                                                                                                                                                                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Language**            | [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white)](https://www.python.org/)                                                                                                                                                                                                                                                   |
-| **Collaboration Tool**  | [![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/) [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/) |
-| **LLM Model**           | [![GPT-4o](https://img.shields.io/badge/GPT--4o-mini%20-412991?style=for-the-badge&logo=openai&logoColor=white)](https://platform.openai.com/)                                                                                                                                                                                                                                     |
-| **Embedding Model**     | [![text-embedding-3-small](https://img.shields.io/badge/text--embedding--3--small-00A67D?style=for-the-badge&logo=openai&logoColor=white)](https://platform.openai.com/docs/guides/embeddings)                                                                                                                                                                                     |
-| **Vector DB**           | [![Pinecone](https://img.shields.io/badge/qdrant-0075A8?style=for-the-badge&logo=qdrant&logoColor=white)](https://qdrant.tech/)                                                                                                                                                                                                                                                    |
-| **Orchestration / RAG** | [![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white)](https://www.langchain.com/)                                                                                                                                                                                                                                       |
-| **Development Env**     | [![VS Code](https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)](https://code.visualstudio.com/) [![Conda](https://img.shields.io/badge/Conda-3EB049?style=for-the-badge&logo=anaconda&logoColor=white)](https://www.anaconda.com/)                                                                                           |
-
-<br>
-
----
-
 # 🪢시스템 아키텍처
 
 ### 프로젝트 구조****
