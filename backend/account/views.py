@@ -18,24 +18,6 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-# 설문 welcome page view
-#  요청 -> 인삿말 화면을 응답.
-def welcome(request):
-    print("welcome 실행")
-    # 요청 처리
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # 응답 화면 생성
-    response = render( # template 호출 -결과-> HttpResponse로 반환
-        request, # HttpRequest
-        "account/welcome.html", # 호출할 template의 경로
-        {"now":now} # template에 전달할 값들. name-value 전달.
-                    # Context Value 라고 한다.
-    )
-    print(type(response)) # server를 실행한 터미널에 출력.
-    return response
-
-
-
 def create(request):
     if request.method == "GET":
         # Form객체를 context value로 전달.

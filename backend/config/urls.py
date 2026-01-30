@@ -17,9 +17,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-# from polls.views import welcome
+from account import views
 
 urlpatterns = [
+    path("", views.welcome, name="welcome"),
     path('admin/', admin.site.urls),
     # 1. ip:포트번호 이후, client의 요청경로 2. 호출할 view, 3. name="설정 이름"
     # path('polls/welcome', welcome, name="poll_welcome")
