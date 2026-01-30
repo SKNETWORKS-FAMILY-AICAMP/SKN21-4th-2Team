@@ -105,7 +105,7 @@
 
 ### 백엔드 구조도
 
-![백엔드]("asset/readme/client2django-app.jpg")
+![백엔드](asset/readme/client2django-app.jpg)
 
 ### 시스템 아키텍처 구조도
 
@@ -113,7 +113,7 @@
 
 # DB 스키마
 
-![스키마]("./asset/readme/erd-diagram.jpg")
+![스키마](./asset/readme/erd-diagram.jpg)
 
 <br>
 
