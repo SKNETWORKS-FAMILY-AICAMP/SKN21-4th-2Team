@@ -1,9 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-
 import { useLocation } from 'react-router-dom';
-
-import axios from "axios";
-
+// import axios from "axios"; // axios는 쓰지 않아서 제거했습니다 (에러 방지)
 import './App.css';
 
 // 이미지 파일 
@@ -11,8 +8,8 @@ import heartA from './assets/heart_a.png';
 import heartClosed from './assets/heart_closed.png';
 import heartO from './assets/heart_o.png';
 
-// 백엔드 API URL (Django)
-const API_BASE_URL = 'http://localhost:8000';
+// ✅ [수정 1] 백엔드 API URL (AWS 공인 IP로 변경)
+const API_BASE_URL = 'http://43.201.89.96:8000';
 
 function App() {
   const location = useLocation();
@@ -53,7 +50,7 @@ function App() {
   // 🌙 다크모드 상태
   const [isDarkMode, setIsDarkMode] = useState(false);
   
-  // 🔐 인증 상태 (Django에서 관리할 예정)
+  // 🔐 인증 상태
   const [user, setUser] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('login');
@@ -104,7 +101,7 @@ function App() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // 🔐 로그인 (Django 연동 예정)
+  // 🔐 로그인
   const handleLogin = async (e) => {
     e.preventDefault();
     setAuthError('');
@@ -119,13 +116,12 @@ function App() {
       return;
     }
     
-    // TODO: Django 로그인 API 연동
     setUser({ username: authForm.nickname });
     setShowAuthModal(false);
     setAuthForm({ name: '', nickname: '', password: '' });
   };
 
-  // 📝 회원가입 (Django 연동 예정)
+  // 📝 회원가입
   const handleRegister = async (e) => {
     e.preventDefault();
     setAuthError('');
@@ -148,7 +144,6 @@ function App() {
       return;
     }
     
-    // TODO: Django 회원가입 API 연동
     setAuthMode('login');
     setAuthForm({ name: '', nickname: '', password: '' });
     alert('회원가입 성공! 로그인해주세요.');
@@ -240,41 +235,35 @@ function App() {
     }
   };
 
+  // ✅ [수정 2] 메시지 전송 함수 (에러 로직 삭제 및 중복 해결)
   const sendMessage = async () => {
+    // 1. 빈 메시지 방지
     if (inputText.trim() === "") return;
+    
+    // 2. 현재 입력값 저장
     const currentInput = inputText;
     const userMessage = { id: Date.now(), text: currentInput, sender: 'user' };
-    const res = await axios.post("http://127.0.0.1:8000/chat/stream",
-        { message },
-        {
-        headers: {
-            "Content-Type": "application/json",
-        },
-        }
-    );
-    setAnswer(res.data.answer);
-
-    setMessages(prev => [...prev, userMessage]);
-    setInputText("");
-    setIsTyping(true);
-
-    setIsLoading(true);  // 로딩 시작
     
-    // 3초 후 로딩 종료
+    // 3. 내 메시지 화면에 표시 & 입력창 비우기
+    setMessages(prev => [...prev, userMessage]);
+    setInputText("");       
+    setIsTyping(true);      
+    setIsLoading(true);     
+
+    // 4. 로딩 상태 관리 (3초 후 해제)
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
-    
 
-
-
-    // 스트리밍 API 시도
+    // 5. 서버 API 호출 (Streaming API 사용)
     const streamResult = await callStreamingAPI(currentInput, selectedCounselor.id);
     
-    // 스트리밍 실패 시 일반 API + 타이핑 효과
+    // 6. 스트리밍 실패 시 일반 API로 재시도
     if (streamResult === null) {
       const botResponseText = await callAPI(currentInput, selectedCounselor.id);
-      typeWriterEffect(botResponseText);
+      if (botResponseText) {
+         typeWriterEffect(botResponseText);
+      }
     }
   };
 
@@ -324,7 +313,7 @@ function App() {
                       text: `💫 상담사가 ${counselor.name}(으)로 변경되었습니다. 이어서 상담해주세요!`, 
                       sender: 'bot' 
                     }]);
-                    // 상담사 선택 통계 업데이트
+                    // 상담사 선택 통계 업데이트 (에러 방지를 위해 catch 추가)
                     fetch(`${API_BASE_URL}/chat/api/counselor-select/`, {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },

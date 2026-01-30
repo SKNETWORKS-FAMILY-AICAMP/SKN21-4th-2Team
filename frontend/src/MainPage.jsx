@@ -6,7 +6,7 @@ import './MainPage.css';
 import characterImg from './assets/character.png';
 
 // 백엔드 API URL
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://43.201.89.96:8000';
 
 function MainPage() {
   const navigate = useNavigate();
