@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
+<<<<<<< HEAD
 import { useLocation } from 'react-router-dom';
+=======
+import axios from "axios";
+>>>>>>> 4eb589572afb66703ad4c12d5eb3277ca8cda87e
 import './App.css';
 
 // 이미지 파일 
@@ -240,9 +244,20 @@ function App() {
     if (inputText.trim() === "") return;
     const currentInput = inputText;
     const userMessage = { id: Date.now(), text: currentInput, sender: 'user' };
+    const res = await axios.post("http://127.0.0.1:8000/chat/stream",
+        { message },
+        {
+        headers: {
+            "Content-Type": "application/json",
+        },
+        }
+    );
+    setAnswer(res.data.answer);
+
     setMessages(prev => [...prev, userMessage]);
     setInputText("");
     setIsTyping(true);
+<<<<<<< HEAD
     setIsLoading(true);  // 로딩 시작
     
     // 3초 후 로딩 종료
@@ -250,6 +265,9 @@ function App() {
       setIsLoading(false);
     }, 3000);
     
+=======
+
+>>>>>>> 4eb589572afb66703ad4c12d5eb3277ca8cda87e
     // 스트리밍 API 시도
     const streamResult = await callStreamingAPI(currentInput, selectedCounselor.id);
     

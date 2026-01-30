@@ -17,24 +17,19 @@ from django.contrib.auth.forms import (AuthenticationForm, PasswordChangeForm)
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-
-# 설문 welcome page view
-#  요청 -> 인삿말 화면을 응답.
 def welcome(request):
     print("welcome 실행")
     # 요청 처리
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # 응답 화면 생성
+    # 응답 화면 생성 -> template 호출(template이 사용할 값을 전달-now)
     response = render( # template 호출 -결과-> HttpResponse로 반환
         request, # HttpRequest
-        "account/welcome.html", # 호출할 template의 경로
+        "chat/welcome.html", # 호출할 template의 경로
         {"now":now} # template에 전달할 값들. name-value 전달.
                     # Context Value 라고 한다.
     )
     print(type(response)) # server를 실행한 터미널에 출력.
     return response
-
-
 
 def create(request):
     if request.method == "GET":
@@ -55,7 +50,7 @@ def create(request):
             print(type(user), user)
 
 
-            return redirect(reverse("account:welcome"))
+            return redirect(reverse("chat:welcome"))
 
         else:  # 요청파라미터에 문제가 있는 경우.
             return render(
@@ -114,7 +109,7 @@ def user_login(request):
             if request.GET.get("next"):  # next 쿼리스트링이 있다면
                 return redirect(request.GET.get("next"))
 
-            return redirect(reverse("account:welcome"))
+            return redirect(reverse("chat:welcome"))
         else:
             ## 불일치- 로그인 화면으로 이동
             return render(
@@ -131,7 +126,7 @@ def user_login(request):
 def user_logout(request):
     # 로그인시 호출했던 login() 함수가 처리한 것을 무효화 처리(session에서 user정보를 제거)
     logout(request)
-    return redirect(reverse("account:welcome"))
+    return redirect(reverse("chat:welcome"))
 
 
 # 로그인한 회원정보 수정
@@ -194,4 +189,4 @@ def user_delete(request):
     user.delete()  # DB 에서 삭제
     # 로그아웃 처리
     logout(request)
-    return redirect(reverse("account:welcome"))
+    return redirect(reverse("chat:welcome"))

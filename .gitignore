@@ -5,6 +5,7 @@ venv/
 # cache
 .sqllite3
 .env
+db.sqlite3
 # *.txt
 __pycache__/
 raw_data/
