@@ -1,11 +1,5 @@
 # polls/views.py
 
-from django.http import HttpResponse
-
-from django.db import transaction  # DB Transaction 처리.
-from django.core.paginator import Paginator
-
-from datetime import datetime
 from .models import CustomUser
 from .forms import CustomUserChangeForm, CustomUserCreationForm
 
@@ -17,19 +11,7 @@ from django.contrib.auth.forms import (AuthenticationForm, PasswordChangeForm)
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-def welcome(request):
-    print("welcome 실행")
-    # 요청 처리
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # 응답 화면 생성 -> template 호출(template이 사용할 값을 전달-now)
-    response = render( # template 호출 -결과-> HttpResponse로 반환
-        request, # HttpRequest
-        "chat/welcome.html", # 호출할 template의 경로
-        {"now":now} # template에 전달할 값들. name-value 전달.
-                    # Context Value 라고 한다.
-    )
-    print(type(response)) # server를 실행한 터미널에 출력.
-    return response
+
 
 def create(request):
     if request.method == "GET":
@@ -181,7 +163,7 @@ def password_change(request):
 # 사용자 삭제(탈퇴) 처리
 # 요청 URL: /account/delete
 # view함수: user_delete
-# 응답: redirect - polls:welcome
+# 응답: redirect - chat:welcome
 @login_required
 def user_delete(request):
     # 로그인 한 사용자를 삭제

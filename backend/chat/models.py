@@ -15,7 +15,8 @@ class Chat(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(
         CustomUser,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        db_column='user_id'
     )
     session_id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     is_active = models.BooleanField(default=True)
@@ -40,12 +41,14 @@ class Chat_Message(models.Model):
     message_id = models.AutoField(primary_key=True)
     role_id = models.ForeignKey(
         Role, # 참조할 Model Class
-        on_delete=models.DO_NOTHING
+        on_delete=models.DO_NOTHING,
+        db_column='role_id'
     )
     message = models.TextField() # 긴 문자열 타입
     session_id = models.ForeignKey(
         Chat, # 참조할 Model Class
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        db_column='session_id'
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

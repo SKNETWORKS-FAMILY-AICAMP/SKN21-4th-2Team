@@ -6,10 +6,14 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(_
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, StreamingHttpResponse
+
+from django.http import HttpResponse
+
 from django.shortcuts import render, redirect
-from django.urls import reverse 
+
 
 
 from .models import Chat, Chat_Message, CounselorStats
@@ -28,10 +32,13 @@ from rest_framework.response import Response
 from django.db import transaction  # DB Transaction 처리.
 
 from django.core.paginator import Paginator
+=======
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
 
 from dotenv import load_dotenv
 
-from django.shortcuts import render
 from django.http import StreamingHttpResponse
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
