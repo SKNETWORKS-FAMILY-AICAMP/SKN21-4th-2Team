@@ -50,7 +50,7 @@ class Chat_Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.message_id}. {self.role}. {self.message}. {self.session_id}. {self.created_at}"
+        return f"{self.message_id}. {self.role_id}. {self.message}. {self.session_id}. {self.created_at}"
 
 # create table choice(
 #     choice_text varchar(200) not null,
