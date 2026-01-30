@@ -3,7 +3,7 @@
 venv/
 .idea/
 # cache
-
+.sqllite3
 .env
 # *.txt
 __pycache__/
