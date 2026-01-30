@@ -56,7 +56,20 @@ class Persona(models.Model):
     youtuber_name = models.CharField(max_length=10) # 문자열타입 (user 또는 assistant)
 
     def __str__(self):
-        return f"{self.message_id}. {self.role}. {self.message}. {self.session_id}. {self.created_at}"
+        return f"{self.persona_id}. {self.youtuber_name}"
+
+
+# 상담사 선택 통계 테이블
+class CounselorStats(models.Model):
+    counselor_name = models.CharField(max_length=50, unique=True)
+    selection_count = models.IntegerField(default=0)
+    last_selected = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.counselor_name}: {self.selection_count}회"
+    
+    class Meta:
+        ordering = ['-selection_count']
 
 # create table choice(
 #     choice_text varchar(200) not null,

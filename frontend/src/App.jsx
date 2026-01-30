@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './App.css';
 
 // 이미지 파일 
@@ -10,6 +11,8 @@ import heartO from './assets/heart_o.png';
 const API_BASE_URL = 'http://localhost:8000';
 
 function App() {
+  const location = useLocation();
+  
   // 📋 상담사 목록
   const counselors = [
     { id: '권승현', name: '권승현' },
@@ -27,8 +30,18 @@ function App() {
     { id: '마튜브', name: '마튜브' }
   ];
 
-  // 현재 선택된 상담사 (기본값: 김달)
-  const [selectedCounselor, setSelectedCounselor] = useState(counselors[4]);
+  // 메인페이지에서 선택된 상담사 가져오기
+  const getInitialCounselor = () => {
+    const selectedName = location.state?.selectedCounselor;
+    if (selectedName) {
+      const found = counselors.find(c => c.name === selectedName);
+      return found || counselors[4];
+    }
+    return counselors[4]; // 기본값: 김달
+  };
+
+  // 현재 선택된 상담사
+  const [selectedCounselor, setSelectedCounselor] = useState(getInitialCounselor);
   
   // 🔧 사이드바 열림/닫힘 상태
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -43,13 +56,15 @@ function App() {
   const [authForm, setAuthForm] = useState({ name: '', nickname: '', password: '' });
   const [authError, setAuthError] = useState('');
 
-  // 대화 목록
+  // 대화 목록 - 선택된 상담사로 초기 메시지 설정
+  const initialCounselor = getInitialCounselor();
   const [messages, setMessages] = useState([
-    { id: 1, text: "안녕하세요! 김달입니다. 연애 고민이 있으시면 편하게 말씀해주세요 💕", sender: 'bot' }
+    { id: 1, text: `안녕하세요! ${initialCounselor.name}입니다. 연애 고민이 있으시면 편하게 말씀해주세요 💕`, sender: 'bot' }
   ]);
   
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);  // 3초 로딩 상태
   
   // 봇 이미지 상태 관리
   const [currentBotImage, setCurrentBotImage] = useState(heartA);
@@ -228,6 +243,12 @@ function App() {
     setMessages(prev => [...prev, userMessage]);
     setInputText("");
     setIsTyping(true);
+    setIsLoading(true);  // 로딩 시작
+    
+    // 3초 후 로딩 종료
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
     
     // 스트리밍 API 시도
     const streamResult = await callStreamingAPI(currentInput, selectedCounselor.id);
@@ -268,28 +289,39 @@ function App() {
       {/* 👈 왼쪽 사이드바 */}
       <div className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
         
-        {/* 상담사 선택 Select */}
+        {/* 상담사 선택 리스트 */}
         <div className="sidebar-section">
           <label className="section-label">상담사 선택</label>
-          <select 
-            className="counselor-select"
-            value={selectedCounselor.id}
-            onChange={handleCounselorChange}
-          >
+          <div className="counselor-list">
             {counselors.map((counselor) => (
-              <option key={counselor.id} value={counselor.id}>
+              <div 
+                key={counselor.id}
+                className={`counselor-item ${selectedCounselor.id === counselor.id ? 'active' : ''}`}
+                onClick={() => {
+                  if (counselor.id !== selectedCounselor.id) {
+                    setSelectedCounselor(counselor);
+                    setIsTyping(false);
+                    setMessages(prev => [...prev, { 
+                      id: Date.now(), 
+                      text: `💫 상담사가 ${counselor.name}(으)로 변경되었습니다. 이어서 상담해주세요!`, 
+                      sender: 'bot' 
+                    }]);
+                    // 상담사 선택 통계 업데이트
+                    fetch(`${API_BASE_URL}/chat/api/counselor-select/`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ counselor_name: counselor.name })
+                    }).catch(err => console.log('통계 업데이트 실패:', err));
+                  }
+                }}
+              >
                 {counselor.name}
-              </option>
+              </div>
             ))}
-          </select>
+          </div>
         </div>
         
-        {/* 🌙 다크모드 토글 버튼 (하단 배치) */}
-        <div className="sidebar-bottom">
-          <button className="dark-mode-btn" onClick={() => setIsDarkMode(!isDarkMode)}>
-            {isDarkMode ? '☀️ 라이트' : '🌙 다크'}
-          </button>
-        </div>
+
       </div>
 
       {/* 👉 채팅창 영역 */}
@@ -299,6 +331,15 @@ function App() {
           
           {/* 🔐 오른쪽 상단 인증 버튼 */}
           <div className="header-auth">
+            {/* 🌙 다크모드 토글 스위치 */}
+            <div className="dark-mode-toggle">
+              <span className="toggle-label">{isDarkMode ? '🌙' : '☀️'}</span>
+              <div 
+                className={`toggle-switch ${isDarkMode ? 'active' : ''}`}
+                onClick={() => setIsDarkMode(!isDarkMode)}
+              />
+            </div>
+            
             {user ? (
               <div className="user-info-header">
                 <span className="user-name-header">👤 {user.username}</span>
@@ -321,15 +362,31 @@ function App() {
           {messages.map((msg, index) => (
             <div key={msg.id} className={`message-wrapper ${msg.sender}`}>
               {msg.sender === 'bot' && (
-                <img 
-                  src={(isTyping && index === messages.length - 1) ? currentBotImage : heartA} 
-                  alt="Bot" 
-                  className="bot-image" 
-                />
+                <>
+                  {/* 로딩 중이고 마지막 메시지이면 스피너, 아니면 캐릭터 */}
+                  {(isLoading && index === messages.length - 1) ? (
+                    <div className="typing-indicator">
+                      <div className="loading-spinner"></div>
+                    </div>
+                  ) : (
+                    <img 
+                      src={(isTyping && index === messages.length - 1) ? currentBotImage : heartA} 
+                      alt="Bot" 
+                      className="bot-image" 
+                    />
+                  )}
+                  <div className="bot-info">
+                    <span className="counselor-name">{selectedCounselor.name}</span>
+                    <div className={`bubble ${msg.sender}`}>{msg.text}</div>
+                  </div>
+                </>
               )}
-              <div className={`bubble ${msg.sender}`}>{msg.text}</div>
+              {msg.sender === 'user' && (
+                <div className={`bubble ${msg.sender}`}>{msg.text}</div>
+              )}
             </div>
           ))}
+          
           <div ref={messagesEndRef} />
         </div>
 
