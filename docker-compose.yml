@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # 백엔드 서비스 (Django)
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile # backend 폴더 안에 Dockerfile이 있다는 가정
+    container_name: django_backend
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=False
+      - PYTHONUNBUFFERED=1
+    # 메모리 부족 방지를 위한 리소스 제한 및 예약
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    # Gunicorn 실행: 타임아웃과 프리로딩으로 모델 로딩 최적화
+    command: >
+      gunicorn --bind 0.0.0.0:8000 
+      --workers 1 
+      --timeout 120 
+      --preload 
+      config.wsgi:application
+    ports:
+      - "8000:8000"
+
+  # 프론트엔드 & 리버스 프록시 (Nginx)
+  nginx:
+    image: nginx:latest
+    container_name: nginx_server
+    volumes:
+      - ./dist:/var/www/frontend # 빌드된 정적 파일
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # 위에서 만든 설정
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
