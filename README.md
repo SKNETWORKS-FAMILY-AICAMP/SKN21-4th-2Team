@@ -166,6 +166,7 @@ SKN21_3rd/
 
 ## 화면설계
 
+# 1.메인페이지
 <img width="1232" height="700" alt="image" src="https://github.com/user-attachments/assets/7a61782e-e286-465b-8205-61ca4249ab1d" />
 
 
