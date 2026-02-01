@@ -79,48 +79,48 @@
 | **Vector DB** | ![Qdrant](https://img.shields.io/badge/qdrant-%23bd1c2b.svg?style=for-the-badge&logo=qdrant&logoColor=white) |
 | **Orchestration** | ![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white) |
 
-<hr>
+<br>
 ##디렉토리구조
 
-SKN21_3rd/ (Root)
-├── .venv/                          # Python 가상환경 (의존성 패키지 관리)
-├── .env                            # 보안 환경 변수 (OpenAI API Key, DB 접속 정보 등)
-├── requirements.txt                # 백엔드 설치 라이브러리 목록
-├── manage.py                       # Django 프로젝트 관리 스크립트
-├── db.sqlite3                      # 개발용 SQLite 데이터베이스 파일
-│
-├── backend/                        # Django 백엔드 시스템
-│   ├── account/                    # 사용자 인증 및 계정 관리 앱
-│   ├── chat/                       # 챗봇 비즈니스 로직 앱
-│   │   ├── migrations/             # DB 마이그레이션 이력 관리
-│   │   ├── models.py               # 채팅 내역 및 페르소나 데이터 모델
-│   │   ├── serializers.py          # API 데이터 직렬화 설정 (DRF)
-│   │   ├── urls.py                 # 채팅 관련 API 엔드포인트 정의
-│   │   └── views.py                # RAG 검색, 페르소나 적용 및 스트리밍 로직
-│   └── config/                     # 프로젝트 메인 환경 설정
-│       ├── settings.py             # DB(MySQL/RDS), Qdrant 연동 및 보안 설정
+## 📂 Project Structure
+
+```text
+SKN21_3rd/
+├── backend/                        # Django Backend Application
+│   ├── account/                    # 사용자 계정 및 인증 앱
+│   ├── aws_config/                 # AWS 배포 및 인프라 설정
+│   ├── chat/                       # 챗봇 서비스 핵심 로직 앱
+│   │   ├── migrations/             # DB 마이그레이션 파일
+│   │   ├── models.py               # 채팅 로그 및 페르소나 데이터 모델
+│   │   ├── serializers.py          # DRF 데이터 직렬화 설정
+│   │   ├── urls.py                 # 채팅 API 엔드포인트 라우팅
+│   │   └── views.py                # RAG 로직 및 AI 답변 스트리밍 처리
+│   └── config/                     # 프로젝트 메인 설정
+│       ├── settings.py             # DB, Qdrant, 보안 환경 설정
 │       ├── urls.py                 # 프로젝트 전체 URL 라우팅
-│       └── wsgi.py                 # Gunicorn 연동용 웹 서버 인터페이스
-│
-├── frontend/                       # React 프론트엔드 시스템
-│   ├── public/                     # 정적 리소스 (아이콘, 파비콘 등)
-│   ├── src/                        # 프론트엔드 핵심 소스코드
-│   │   ├── assets/                 # 이미지 및 폰트 자원
-│   │   ├── App.jsx                 # 메인 앱 컴포넌트 (라우팅 등)
-│   │   ├── App.css                 # 앱 전체 레이아웃 및 테마 스타일 (중요!)
-│   │   ├── MainPage.jsx            # 13명 상담가 선택 및 채팅 메인 페이지
-│   │   ├── MainPage.css            # 메인 페이지 전용 스타일 시트
-│   │   ├── main.jsx                # React 엔트리 포인트
-│   │   └── index.css               # 전역 기본 스타일 및 초기화 설정
-│   ├── index.html                  # SPA 메인 HTML 파일
-│   ├── vite.config.js              # Vite 빌드 및 개발용 프록시 설정
-│   └── package.json                # 프론트엔드 라이브러리 및 스크립트 관리
-│
-└── utils/ (또는 rag/utils)         # E2E 데이터 파이프라인 유틸리티
-    ├── ej_pipeline.py              # 유튜브 자막 자동 수집 및 전처리 파이프라인
-    ├── qdrant_delete.py            # Qdrant DB 컬렉션 관리 및 초기화 도구
-    ├── qdrant_export.py            # 벡터 데이터 백업 및 추출 도구
-    └── export_data.json            # 파이프라인을 통해 가공된 최종 데이터셋
+│       └── wsgi.py                 # Gunicorn 연동 인터페이스
+├── frontend/                       # React Frontend Application
+│   ├── public/                     # 정적 리소스 (아이콘 등)
+│   ├── src/                        # 프론트엔드 소스코드
+│   │   ├── assets/                 # 이미지 및 미디어 자원
+│   │   ├── App.jsx                 # 메인 앱 컴포넌트
+│   │   ├── App.css                 # 전역 레이아웃 및 테마 스타일
+│   │   ├── MainPage.jsx            # 상담가 선택 및 채팅 인터페이스
+│   │   ├── MainPage.css            # 채팅 페이지 전용 스타일
+│   │   ├── index.css               # 기본 CSS 초기화 및 폰트 설정
+│   │   └── main.jsx                # React 엔트리 포인트
+│   ├── index.html                  # SPA 메인 HTML
+│   ├── vite.config.js              # Vite 빌드 및 프록시 설정
+│   └── package.json                # 프론트엔드 의존성 관리
+├── utils/                          # E2E 데이터 파이프라인 유틸리티
+│   ├── ej_pipeline.py              # 유튜브 자막 수집 및 전처리 파이프라인
+│   ├── qdrant_delete.py            # Qdrant 컬렉션 관리 도구
+│   ├── qdrant_export.py            # 벡터 데이터 백업 및 추출 스크립트
+│   └── export_data.json            # 최종 가공된 데이터셋 예시
+├── .env                            # API 키 및 DB 접속 보안 변수
+├── manage.py                       # Django 관리 스크립트
+├── requirements.txt                # 백엔드 라이브러리 의존성 목록
+└── db.sqlite3                      # 개발용 로컬 DB
 
 
 ## 📊 데이터 구축 및 검색 프로세스 (Data Processing & RAG Flow)
