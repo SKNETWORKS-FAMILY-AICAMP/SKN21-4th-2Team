@@ -5,6 +5,7 @@
 - <p align="center">
   <img src="[https://lh3.googleusercontent.com/gg-dl/AOI_d_-OJeuTt4RhW3mWUoLBzP43aenaW3Vsn1bHmFKpi-Y0MvEhluxoHiv5SUkyQ5O99UOb-LdLfbju92Y86OQdOsNbSWiL9dQK-jBxgNxHyIAF8wRluEpKZCLMFecMfpGTkCQ3fv47nteUQ-Rghicjz1IV2_4gl8eaywSqy7kgpwV8s-_W=s1024-rj](https://lh3.googleusercontent.com/gg-dl/AOI_d_-OJeuTt4RhW3mWUoLBzP43aenaW3Vsn1bHmFKpi-Y0MvEhluxoHiv5SUkyQ5O99UOb-LdLfbju92Y86OQdOsNbSWiL9dQK-jBxgNxHyIAF8wRluEpKZCLMFecMfpGTkCQ3fv47nteUQ-Rghicjz1IV2_4gl8eaywSqy7kgpwV8s-_W=s1024-rj)" alt="명짝 연애상담소 로고" width="500px" />
 </p>
+
 - ### 팀원 소개 :
 
 <div align="center">
@@ -84,7 +85,7 @@
 | **Orchestration** | ![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white) |
 
 <br>
-##디렉토리구조
+
 
 ## 📂 Project Structure
 
