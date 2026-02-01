@@ -81,6 +81,7 @@
 
 <hr>
 ##디렉토리구조
+
 SKN21_3rd/ (Root)
 ├── .venv/                          # Python 가상환경 (의존성 패키지 관리)
 ├── .env                            # 보안 환경 변수 (OpenAI API Key, DB 접속 정보 등)
