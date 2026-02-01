@@ -177,6 +177,10 @@ SKN21_3rd/
 ### 3.로그인 화면
 <img width="1217" height="695" alt="image" src="https://github.com/user-attachments/assets/ce217d54-6e8c-4536-af36-400219efd228" />
 
+### 4.회원가입 화면 
+<img width="1227" height="690" alt="image" src="https://github.com/user-attachments/assets/fc86b83d-8b47-408e-819c-2a7ff2f02843" />
+
+
 
 
 
