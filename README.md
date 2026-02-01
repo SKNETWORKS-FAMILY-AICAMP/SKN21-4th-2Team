@@ -123,41 +123,7 @@ SKN21_3rd/
 └── db.sqlite3                      # 개발용 로컬 DB
 
 
-## 📊 데이터 구축 및 검색 프로세스 (Data Processing & RAG Flow)
 
-### 1. 데이터 수집 및 전처리 자동화 (Data Pipeline)
-기존의 수동 스크립트 복사 방식의 비효율성을 개선하기 위해 **`youtube_transcript_api`**를 활용한 **End-to-End 데이터 파이프라인**을 자체 구축하였습니다.
-
-- **자동화 로직:** YouTube URL 입력 ➔ 자막(Script) 자동 추출 ➔ 텍스트 정제 ➔ CSV 변환 ➔ Vector DB 적재
-- **전처리 (Pre-processing):**
-  - 영상 데이터 특유의 **불용어(추임새, 반복어)** 제거 및 구어체 정규화 수행
-  - 텍스트 길이에 따른 청크(Chunk) 분할 및 임베딩 변환
-- **성과:** 데이터 구축 시간을 획기적으로 단축하고, LLM 학습에 최적화된 고품질 데이터셋 확보
-
-### 2. Qdrant Vector DB 구조 (Schema & Payload)
-수집된 상담 데이터는 **Qdrant**에 벡터(Vector)와 메타데이터(Payload) 형태로 구조화되어 저장됩니다. 단순 텍스트 매칭이 아닌, 의미 기반 검색을 위해 Payload를 상세하게 설계했습니다.
-
-| 필드명 (Key) | 설명 (Description) | 예시 (Example) |
-| :--- | :--- | :--- |
-| **id** | 고유 벡터 ID | `5f3a...` |
-| **vector** | OpenAI Embedding Vector | `[0.012, -0.034, ...]` (1536 dim) |
-| **payload.page_content** | 실제 상담 대화 내용 | "권태기가 왔을 때는..." |
-| **payload.source** | 원본 유튜브 영상 URL | `https://youtu.be/...` |
-| **payload.title** | 영상 제목 | "연애의 참견 3회" |
-| **payload.speaker** | 화자 정보 | "상담가 A" |
-
-### 3. 검색 및 답변 생성 원리 (Retrieval & Display)
-사용자가 질문을 입력하면 시스템은 다음과 같은 흐름으로 최적의 답변을 생성하여 화면에 표시합니다.
-
-1.  **Query Embedding:** 사용자의 질문(Input)을 임베딩 모델을 통해 벡터로 변환합니다.
-2.  **Semantic Search:** Qdrant DB에서 질문 벡터와 가장 유사도(Cosine Similarity)가 높은 Top-k개의 상담 로그를 검색합니다.
-3.  **Context Injection:** 검색된 상담 내용(`page_content`)과 메타데이터(`source`)를 프롬프트에 포함하여 LLM에 전달합니다.
-4.  **Response Generation:** LLM은 상담 데이터를 근거로 페르소나에 맞는 위로와 조언을 생성합니다.
-5.  **Frontend Display:**
-    - **채팅:** 생성된 답변을 말풍선 형태로 출력
-    - **참거 출처:** Payload에 저장된 `source` URL을 활용하여, 답변의 근거가 된 **YouTube 영상 링크**를 함께 제공
-
----
 
 # 🪢시스템 아키텍처
 
