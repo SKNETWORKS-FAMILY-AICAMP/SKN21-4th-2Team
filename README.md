@@ -1,6 +1,6 @@
 # 🖐️ 팀 소개
 
-- ## 팀명 : **명짝**
+- # 팀명 : **명짝**
 
 - <p align="center">
   <img src="[https://lh3.googleusercontent.com/gg-dl/AOI_d_-OJeuTt4RhW3mWUoLBzP43aenaW3Vsn1bHmFKpi-Y0MvEhluxoHiv5SUkyQ5O99UOb-LdLfbju92Y86OQdOsNbSWiL9dQK-jBxgNxHyIAF8wRluEpKZCLMFecMfpGTkCQ3fv47nteUQ-Rghicjz1IV2_4gl8eaywSqy7kgpwV8s-_W=s1024-rj](https://lh3.googleusercontent.com/gg-dl/AOI_d_-OJeuTt4RhW3mWUoLBzP43aenaW3Vsn1bHmFKpi-Y0MvEhluxoHiv5SUkyQ5O99UOb-LdLfbju92Y86OQdOsNbSWiL9dQK-jBxgNxHyIAF8wRluEpKZCLMFecMfpGTkCQ3fv47nteUQ-Rghicjz1IV2_4gl8eaywSqy7kgpwV8s-_W=s1024-rj)" alt="명짝 연애상담소 로고" width="500px" />
@@ -164,10 +164,16 @@ SKN21_3rd/
 
 <br>
 
-## 화면설계
+# 화면설계
 
-# 1.메인페이지
+<br>
+
+### 1.메인페이지
 <img width="1232" height="700" alt="image" src="https://github.com/user-attachments/assets/7a61782e-e286-465b-8205-61ca4249ab1d" />
+
+### 2.채팅화면
+<img width="1253" height="658" alt="image" src="https://github.com/user-attachments/assets/990bc92d-872f-4547-8bb3-e716be372f76" />
+
 
 
 ---
