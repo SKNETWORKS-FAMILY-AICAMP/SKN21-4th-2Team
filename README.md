@@ -141,11 +141,13 @@
 
 ### 시스템 아키텍처 구조도
 
+![시스템구조도](assets/readme/system-diagram.jpg)
+
 ---
 
 # DB 스키마
 
-![스키마](./assets/readme/erd-diagram.jpg)
+![스키마](assets/readme/erd-diagram.jpg)
 
 <br>
 
@@ -173,5 +175,5 @@
 | 정덕규 |      |
 | 이의정 |      |
 | 진승언 |      |
-| 이명준 |      |
+| 이명준 |  개발자가 반드시 이해해야하는 `설계 - 개발 - 테스트 - 배포`의 전체 흐름을 느낄 수 있어 좋았습니다.   |
 
