@@ -164,6 +164,10 @@ SKN21_3rd/
 
 <br>
 
+##화면설계
+<img width="1232" height="700" alt="image" src="https://github.com/user-attachments/assets/7a61782e-e286-465b-8205-61ca4249ab1d" />
+
+
 ---
 
 ---
